@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import PostService from "@services/post.service";
 import HttpException from "@utils/exceptions/http.exception";
-import PostResource from "@utils/transformers/post.transformer";
+import PostResource from "@utils/resources/post.resource";
 import Controller from "@controllers/controller";
 
 
