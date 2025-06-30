@@ -3,6 +3,7 @@ import PostService from "@services/post.service";
 import HttpException from "@utils/exceptions/http.exception";
 import PostResource from "@utils/resources/post.resource";
 import Controller from "@controllers/controller";
+import EmailVerificationMail from "@mails/email-verification.mails";
 
 
 class PostController extends Controller {
@@ -23,6 +24,13 @@ class PostController extends Controller {
     public index = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
         try {
             const posts = await this.PostService.index();
+
+            const token = 'token123456789';
+            const email = 'rahuldev001@yopmail.com';
+
+
+
+            new EmailVerificationMail(email, token).send();
 
             return res.status(200).json({
                 status: true,

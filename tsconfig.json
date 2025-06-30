@@ -16,6 +16,8 @@
       "@interfaces/*":["src/interfaces/*"],
       "@validators/*": ["src/validators/*"],
       "@database/*" : ["src/database/*"],
+      "@mails/*": ["src/mails/*"],
+      "@views/*": ["src/views/*"]
     }
   },
   "include": ["src"],

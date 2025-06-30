@@ -24,6 +24,8 @@
     "@types/multer": "^1.4.13",
     "@types/multer-s3": "^3.0.3",
     "@types/node": "^24.0.3",
+    "@types/nodemailer": "^6.4.17",
+    "@types/nodemailer-express-handlebars": "^4.0.5",
     "@types/uuid": "^10.0.0",
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
@@ -58,6 +60,8 @@
     "morgan": "^1.10.0",
     "multer": "^2.0.1",
     "multer-s3": "^3.0.1",
+    "nodemailer": "^7.0.4",
+    "nodemailer-express-handlebars": "^7.0.0",
     "prisma": "^6.10.1",
     "uuid": "^11.1.0"
   },
@@ -71,6 +75,8 @@
     "@routes/*": "src/routes/*",
     "@interfaces/*": "src/interfaces/*",
     "@validators/*": "src/validators/*",
-    "@database/*": "src/database/*"
+    "@database/*": "src/database/*",
+    "@mails/*": "src/mails/*",
+    "@views/*": "src/views/*"
   }
 }
