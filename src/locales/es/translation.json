@@ -1,0 +1,16 @@
+{
+    "fields": {
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "firstName": "Nombre",
+    "lastName": "Apellido"
+  },
+  "message": {
+    "email_already_exists": "El correo electrónico ya existe"
+  },
+  "validation": {
+    "required": "{{field}} es obligatorio",
+    "min": "{{field}} debe tener al menos {{min}} caracteres",
+    "email": "El correo electrónico debe ser válido"
+  }
+}

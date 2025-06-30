@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "CommonJS",
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "strict": true,
+    "esModuleInterop": true,
+    "baseUrl": "./",
+    "paths": {
+      "@utils/*": ["src/utils/*"],
+      "@middleware/*": ["src/middleware/*"],
+      "@controllers/*":["src/controllers/*"],
+      "@routes/*":["src/routes/*"],
+      "@services/*":["src/services/*"],
+      "@interfaces/*":["src/interfaces/*"],
+      "@validators/*": ["src/validators/*"],
+      "@database/*" : ["src/database/*"],
+    }
+  },
+  "include": ["src"],
+  "exclude": ["node_modules"]
+}
