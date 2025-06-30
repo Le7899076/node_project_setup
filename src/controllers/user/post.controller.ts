@@ -7,8 +7,12 @@ import EmailVerificationMail from "@mails/email-verification.mails";
 
 
 class PostController extends Controller {
+    private PostService: PostService;
 
-    private PostService = new PostService();
+    public constructor() {
+        super();
+        this.PostService = new PostService();
+    }
 
     public create = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
         try {
@@ -25,13 +29,6 @@ class PostController extends Controller {
         try {
             const posts = await this.PostService.index();
 
-            const token = 'token123456789';
-            const email = 'rahuldev001@yopmail.com';
-
-
-
-            new EmailVerificationMail(email, token).send();
-
             return res.status(200).json({
                 status: true,
                 data: PostResource.collection(posts),
@@ -42,4 +39,4 @@ class PostController extends Controller {
     };
 }
 
-export default PostController;
+export default new PostController();

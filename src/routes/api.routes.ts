@@ -1,12 +1,13 @@
 import { Router } from 'express';
-import PostController from '@controllers/post.controller';
+import PostController from '@controllers/user/post.controller';
 import validateMiddleware from '@middleware/validation.middleware';
 import validate from '@validators/post.validator';
+import AuthController from '@controllers/user/auth.controller';
 
 const router = Router();
-const postController = new PostController();
 
-router.get('/posts', postController.index);
-router.post('/posts', validateMiddleware(validate.create), postController.create);
+router.get('/posts', PostController.index);
+router.post('/posts', validateMiddleware(validate.create), PostController.create);
+router.post('/users/register', AuthController.register);
 
 export default router;
