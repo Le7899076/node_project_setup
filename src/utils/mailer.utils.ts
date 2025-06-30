@@ -4,6 +4,7 @@ import { createTransport } from 'nodemailer';
 import hbs from 'nodemailer-express-handlebars';
 import path from 'path';
 import dotenv from 'dotenv';
+import log from '@utils/logger.utils';
 
 dotenv.config();
 
@@ -46,7 +47,7 @@ class Mailer {
       if (error) {
         console.error('Email server connection failed:', error);
       } else {
-        console.log('✅ Email server connected successfully');
+        log('✅ Email server connected successfully');
       }
     });
   }
@@ -76,7 +77,7 @@ class Mailer {
 
     try {
       const info = await this.transporter.sendMail(mailOptions);
-      console.log('Email sent: %s', info.messageId);
+      log('Email sent: %s', info.messageId);
       return info;
     } catch (error) {
       console.error('Failed to send email:', error);

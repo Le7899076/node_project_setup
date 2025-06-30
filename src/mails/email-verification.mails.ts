@@ -1,4 +1,5 @@
 // src/mails/EmailVerificationMail.ts
+import log from '@utils/logger.utils';
 import Mailer from '@utils/mailer.utils';
 
 export default class EmailVerificationMail {
@@ -21,6 +22,6 @@ export default class EmailVerificationMail {
         );
 
         // Success log
-        console.log(`✅ Verification email sent successfully to ${this.email}`);
+        log(`✅ Verification email sent successfully to ${this.email}`);
     }
 }

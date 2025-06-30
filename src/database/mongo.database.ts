@@ -1,3 +1,4 @@
+import log from '@utils/logger.utils';
 import mongoose from 'mongoose';
 
 export const connectMongo = async (): Promise<void> => {
@@ -6,7 +7,7 @@ export const connectMongo = async (): Promise<void> => {
 
   try {
     await mongoose.connect(MONGO_URL);
-    console.log('✅ MongoDB connected');
+    log('✅ MongoDB connected');
   } catch (err) {
     console.error('❌ MongoDB connection error:', err);
     throw err;
