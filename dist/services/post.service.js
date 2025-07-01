@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const post_model_1 = __importDefault(require("src/models/post.model"));
+const post_model_1 = __importDefault(require("@models/post.model"));
 class PostService {
     constructor() {
         this.post = post_model_1.default;

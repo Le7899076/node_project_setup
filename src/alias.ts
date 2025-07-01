@@ -12,3 +12,4 @@ addAlias('@database', path.join(basePath, 'database'));
 addAlias('@mails', path.join(basePath, 'mails'));
 addAlias('@views', path.join(basePath, 'views'));
 addAlias('@config', path.join(basePath, 'config'));
+addAlias('@models', path.join(basePath, 'models'));

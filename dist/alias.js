@@ -17,3 +17,4 @@ const basePath = path_1.default.resolve(__dirname);
 (0, module_alias_1.addAlias)('@mails', path_1.default.join(basePath, 'mails'));
 (0, module_alias_1.addAlias)('@views', path_1.default.join(basePath, 'views'));
 (0, module_alias_1.addAlias)('@config', path_1.default.join(basePath, 'config'));
+(0, module_alias_1.addAlias)('@models', path_1.default.join(basePath, 'models'));

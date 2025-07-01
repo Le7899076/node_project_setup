@@ -19,6 +19,7 @@
       "@mails/*": ["src/mails/*"],
       "@views/*": ["src/views/*"],
       "@config/*": ["src/config/*"], 
+      "@models/*": ["src/models/*"]
     }
   },
   "include": ["src"],
