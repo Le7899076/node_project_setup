@@ -8,7 +8,7 @@ class AuthController extends Controller {
 
         const request = req.body;
 
-        await agenda.now('send register mail', {
+        await agenda.now('send email verification mail', {
             email: request.email,
             token: 'token',
         });

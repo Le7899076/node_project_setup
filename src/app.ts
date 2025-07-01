@@ -9,6 +9,9 @@ import i18n from '@config/i18n.config';
 import log from '@utils/logger.utils';
 import { initializeDatabases } from '@database/init.database';
 import { initializeCronJobs, initializeAgendaJobs } from './cron';
+import path from 'path';
+import { engine } from 'express-handlebars';
+import webRoutes from '@routes/web.routes';
 
 class App {
     public express: Application;
@@ -24,6 +27,8 @@ class App {
         this.initializeRoutes();
         this.initializeErrorHandling();
         this.initializeCronJobs();
+        this.configViewEngine();
+
     }
 
     private initializeMiddleware(): void {
@@ -33,9 +38,11 @@ class App {
         this.express.use(express.json());
         this.express.use(express.urlencoded({ extended: true }));
         this.express.use(compression());
+        this.express.use(express.static(path.join(process.cwd(), 'public')));
     }
 
     private initializeRoutes(): void {
+        this.express.use('/', webRoutes);
         this.express.use('/api', apiRoutes);
     }
 
@@ -54,6 +61,17 @@ class App {
     private initializeCronJobs(): void {
         // initializeCronJobs();
         initializeAgendaJobs();
+    }
+
+    private configViewEngine() {
+        this.express.engine('hbs', engine({
+            extname: 'hbs',
+            defaultLayout: 'main',
+            layoutsDir: path.join(process.cwd(), 'views', 'layouts'),
+            partialsDir: path.join(process.cwd(), 'views', 'partials'),
+        }));
+        this.express.set('view engine', 'hbs');
+        this.express.set('views', path.join(process.cwd(), 'views'));
     }
 
     public listen(): void {
