@@ -17,7 +17,9 @@
       "@validators/*": ["src/validators/*"],
       "@database/*" : ["src/database/*"],
       "@mails/*": ["src/mails/*"],
-      "@views/*": ["src/views/*"]
+      "@views/*": ["src/views/*"],
+      "@config/*": ["src/config/*"],
+      
     }
   },
   "include": ["src"],

@@ -5,7 +5,7 @@ import morgan from 'morgan';
 import compression from 'compression';
 import errorMiddleware from '@middleware/error.middleware';
 import apiRoutes from '@routes/api.routes';
-import webRoutes from '@routes/web.routes';
+import i18n from '@config/i18n.config';
 import log from '@utils/logger.utils';
 import { initializeDatabases } from '@database/init.database';
 
@@ -19,6 +19,7 @@ class App {
 
         this.initializeDatabases();
         this.initializeMiddleware();
+        this.initializeLocalization();
         this.initializeRoutes();
         this.initializeErrorHandling();
     }
@@ -43,6 +44,11 @@ class App {
     private initializeDatabases(): void {
         initializeDatabases();
     };
+
+    private initializeLocalization(): void {
+        this.express.use(i18n.init);
+
+    }
 
     public listen(): void {
         this.express.listen(this.port, () => {
