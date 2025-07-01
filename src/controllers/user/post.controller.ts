@@ -1,10 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import PostService from "@services/post.service";
-import HttpException from "@utils/exceptions/http.exception";
 import PostResource from "@utils/resources/post.resource";
 import Controller from "@controllers/controller";
 import HttpResponse from "@utils/http.response";
-import Post from '../../interfaces/post.interfaces';
 
 
 class PostController extends Controller {
@@ -21,7 +19,7 @@ class PostController extends Controller {
 
         return new HttpResponse(res).success(
             PostResource.transform(post),
-            'Post created successfully'
+            req.t('message.post.created'),
         );
     };
 

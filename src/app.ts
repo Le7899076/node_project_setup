@@ -46,8 +46,7 @@ class App {
     };
 
     private initializeLocalization(): void {
-        this.express.use(i18n.init);
-
+        this.express.use(i18n.middleware.handle(i18n.i18next));
     }
 
     public listen(): void {

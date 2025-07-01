@@ -1,15 +1,25 @@
-import i18n from 'i18n';
+import i18next from 'i18next';
+import Backend from 'i18next-fs-backend';
+import middleware from 'i18next-http-middleware';
 import path from 'path';
-import app from '@config/app.config'; 
 
-i18n.configure({
-  locales: app.supported_languages, // Add other locales as needed
-  defaultLocale: app.locale,
-  directory: path.join(__dirname, '../locales'),
-  autoReload: true,
-  updateFiles: false,
-  objectNotation: true,
-  cookie: 'lang', // optional if you're supporting frontend cookies
-});
+i18next
+  .use(Backend)
+  .use(middleware.LanguageDetector)
+  .init({
+    fallbackLng: 'en',
+    preload: ['en', 'es'],
+    defaultNS: 'translation',
+    backend: {
+      loadPath: path.join(__dirname, '../locales/{{lng}}/{{ns}}.json'),
+    },
+    detection: {
+      order: ['header', 'querystring', 'cookie'],
+      caches: ['cookie']
+    },
+  });
 
-export default i18n;
+export default {
+  i18next,
+  middleware
+};

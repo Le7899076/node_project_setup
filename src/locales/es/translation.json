@@ -1,12 +1,15 @@
 {
-    "fields": {
+  "fields": {
     "email": "Correo electrónico",
     "password": "Contraseña",
     "firstName": "Nombre",
     "lastName": "Apellido"
   },
   "message": {
-    "email_already_exists": "El correo electrónico ya existe"
+    "email_already_exists": "El correo electrónico ya existe",
+    "post": {
+      "created": "Post creado correctamente"
+    }
   },
   "validation": {
     "required": "{{field}} es obligatorio",
