@@ -2,18 +2,12 @@ import Controller from "@controllers/controller";
 import HttpException from "@utils/exceptions/http.exception";
 import HttpResponse from "@utils/http.response";
 import { Request, Response, NextFunction } from "express";
-
+import EmailVerificationMail from "@mails/email-verification.mails";
 class AuthController extends Controller {
     public register = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
-        try {
+       
             const request = req.body;
-
-            console.log(request);
-
-            return new HttpResponse(res).success(request,'User registered successfully');
-        } catch (error: any) {
-            next(new HttpException(400, error.message));
-        }
+            return new HttpResponse(res).success(request, 'User registered successfully');
     };
 }
 

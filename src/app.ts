@@ -33,7 +33,6 @@ class App {
     }
 
     private initializeRoutes(): void {
-        this.express.use('/', webRoutes);
         this.express.use('/api', apiRoutes);
     }
 
