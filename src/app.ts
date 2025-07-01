@@ -8,6 +8,7 @@ import apiRoutes from '@routes/api.routes';
 import i18n from '@config/i18n.config';
 import log from '@utils/logger.utils';
 import { initializeDatabases } from '@database/init.database';
+import { initializeCronJobs } from './cron';
 
 class App {
     public express: Application;
@@ -22,6 +23,7 @@ class App {
         this.initializeLocalization();
         this.initializeRoutes();
         this.initializeErrorHandling();
+        this.initializeCronJobs();
     }
 
     private initializeMiddleware(): void {
@@ -47,6 +49,10 @@ class App {
 
     private initializeLocalization(): void {
         this.express.use(i18n.middleware.handle(i18n.i18next));
+    }
+
+    private initializeCronJobs(): void {
+        initializeCronJobs();
     }
 
     public listen(): void {

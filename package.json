@@ -70,23 +70,24 @@
     "morgan": "^1.10.0",
     "multer": "^2.0.1",
     "multer-s3": "^3.0.1",
+    "node-cron": "^4.2.0",
     "nodemailer": "^7.0.4",
     "nodemailer-express-handlebars": "^7.0.0",
     "prisma": "^6.10.1",
     "uuid": "^11.1.0"
   },
   "_moduleAliases": {
-    "@utils": "dist/utils",
-    "@middleware": "dist/middleware",
-    "@controllers": "dist/controllers",
-    "@routes": "dist/routes",
-    "@services": "dist/services",
-    "@interfaces": "dist/interfaces",
-    "@validators": "dist/validators",
-    "@database": "dist/database",
-    "@mails": "dist/mails",
-    "@views": "dist/views",
-    "@config": "dist/config",
-    "@models": "dist/models"
+    "@utils": "src/utils",
+    "@middleware": "src/middleware",
+    "@controllers": "src/controllers",
+    "@routes": "src/routes",
+    "@services": "src/services",
+    "@interfaces": "src/interfaces",
+    "@validators": "src/validators",
+    "@database": "src/database",
+    "@mails": "src/mails",
+    "@views": "src/views",
+    "@config": "src/config",
+    "@models": "src/models"
   }
 }
