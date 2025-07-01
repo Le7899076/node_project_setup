@@ -18,10 +18,9 @@
       "@database/*" : ["src/database/*"],
       "@mails/*": ["src/mails/*"],
       "@views/*": ["src/views/*"],
-      "@config/*": ["src/config/*"],
-      
+      "@config/*": ["src/config/*"], 
     }
   },
   "include": ["src"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "scripts"]
 }

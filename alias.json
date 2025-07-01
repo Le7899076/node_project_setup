@@ -1,0 +1,13 @@
+{
+  "@utils": "dist/utils",
+  "@middleware": "dist/middleware",
+  "@controllers": "dist/controllers",
+  "@routes": "dist/routes",
+  "@services": "dist/services",
+  "@interfaces": "dist/interfaces",
+  "@validators": "dist/validators",
+  "@database": "dist/database",
+  "@mails": "dist/mails",
+  "@views": "dist/views",
+  "@config": "dist/config"
+}

@@ -1,0 +1,14 @@
+import { addAlias } from 'module-alias';
+import path from 'path';
+const basePath = path.resolve(__dirname);
+addAlias('@utils', path.join(basePath, 'utils'));
+addAlias('@middleware', path.join(basePath, 'middleware'));
+addAlias('@controllers', path.join(basePath, 'controllers'));
+addAlias('@routes', path.join(basePath, 'routes'));
+addAlias('@services', path.join(basePath, 'services'));
+addAlias('@interfaces', path.join(basePath, 'interfaces'));
+addAlias('@validators', path.join(basePath, 'validators'));
+addAlias('@database', path.join(basePath, 'database'));
+addAlias('@mails', path.join(basePath, 'mails'));
+addAlias('@views', path.join(basePath, 'views'));
+addAlias('@config', path.join(basePath, 'config'));
