@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 require("dotenv/config");
 require("module-alias/register");
-const validateEnv_1 = __importDefault(require("./utils/validateEnv"));
+const validateEnv_1 = __importDefault(require("@utils/validateEnv"));
 const app_1 = __importDefault(require("./app"));
 (0, validateEnv_1.default)();
 const app = new app_1.default(Number(process.env.PORT));

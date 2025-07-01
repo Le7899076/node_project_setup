@@ -43,6 +43,7 @@
   "dependencies": {
     "@prisma/client": "^6.10.1",
     "@types/joi": "^17.2.2",
+    "agenda": "^5.0.0",
     "aws-sdk": "^2.1692.0",
     "bcrypt": "^6.0.0",
     "busboy": "^1.6.0",
@@ -75,16 +76,16 @@
     "uuid": "^11.1.0"
   },
   "_moduleAliases": {
-    "@utils": "dist/utils",
-    "@middleware": "dist/middleware",
-    "@controllers": "dist/controllers",
-    "@routes": "dist/routes",
-    "@services": "dist/services",
-    "@interfaces": "dist/interfaces",
-    "@validators": "dist/validators",
-    "@database": "dist/database",
-    "@mails": "dist/mails",
-    "@views": "dist/views",
-    "@config": "dist/config"
+    "@utils": "src/utils",
+    "@middleware": "src/middleware",
+    "@controllers": "src/controllers",
+    "@routes": "src/routes",
+    "@services": "src/services",
+    "@interfaces": "src/interfaces",
+    "@validators": "src/validators",
+    "@database": "src/database",
+    "@mails": "src/mails",
+    "@views": "src/views",
+    "@config": "src/config"
   }
 }

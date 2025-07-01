@@ -1,13 +1,13 @@
 {
-  "@utils": "dist/utils",
-  "@middleware": "dist/middleware",
-  "@controllers": "dist/controllers",
-  "@routes": "dist/routes",
-  "@services": "dist/services",
-  "@interfaces": "dist/interfaces",
-  "@validators": "dist/validators",
-  "@database": "dist/database",
-  "@mails": "dist/mails",
-  "@views": "dist/views",
-  "@config": "dist/config"
+  "@utils": "src/utils",
+  "@middleware": "src/middleware",
+  "@controllers": "src/controllers",
+  "@routes": "src/routes",
+  "@services": "src/services",
+  "@interfaces": "src/interfaces",
+  "@validators": "src/validators",
+  "@database": "src/database",
+  "@mails": "src/mails",
+  "@views": "src/views",
+  "@config": "src/config"
 }
