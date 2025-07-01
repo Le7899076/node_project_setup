@@ -1,0 +1,22 @@
+{
+  "fields": {
+    "email": "Email",
+    "password": "Password",
+    "firstName": "First name",
+    "lastName": "Last name"
+  },
+  "message": {
+    "email_already_exists": "Email already exists",
+    "post": {
+      "created": "Post created successfully"
+    }
+  },
+  "validation": {
+    "required": "{{field}} is required",
+    "min": "{{field}} must be at least {{min}} characters",
+    "email": "Email must be valid",
+    "unique": {
+      "email": "Email already exists, please choose another one"
+    }
+  }
+}
