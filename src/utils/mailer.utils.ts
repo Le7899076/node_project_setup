@@ -5,6 +5,7 @@ import hbs from 'nodemailer-express-handlebars';
 import path from 'path';
 import dotenv from 'dotenv';
 import log from '@utils/logger.utils';
+import { transporter } from '@libs/mailer.libs';
 
 dotenv.config();
 
@@ -12,18 +13,7 @@ class Mailer {
   private transporter: Transporter;
 
   constructor() {
-    this.transporter = createTransport({
-      host: process.env.MAIL_HOST,
-      port: Number(process.env.MAIL_PORT),
-      secure: process.env.MAIL_ENCRYPTION === 'ssl', // true for SSL, false for TLS
-      auth: {
-        user: process.env.MAIL_USERNAME,
-        pass: process.env.MAIL_PASSWORD,
-      },
-      tls: {
-        rejectUnauthorized: false,
-      },
-    });
+    this.transporter = transporter;
 
     // Setup Handlebars templating engine
     this.transporter.use(

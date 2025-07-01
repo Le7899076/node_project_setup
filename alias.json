@@ -10,5 +10,7 @@
   "@mails": "src/mails",
   "@views": "src/views",
   "@config": "src/config",
-  "@models": "src/models"
+  "@models": "src/models",
+  "@libs": "src/libs",
+  "@jobs": "src/jobs"
 }

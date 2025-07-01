@@ -8,20 +8,54 @@
     "esModuleInterop": true,
     "baseUrl": "./",
     "paths": {
-      "@utils/*": ["src/utils/*"],
-      "@middleware/*": ["src/middleware/*"],
-      "@controllers/*":["src/controllers/*"],
-      "@routes/*":["src/routes/*"],
-      "@services/*":["src/services/*"],
-      "@interfaces/*":["src/interfaces/*"],
-      "@validators/*": ["src/validators/*"],
-      "@database/*" : ["src/database/*"],
-      "@mails/*": ["src/mails/*"],
-      "@views/*": ["src/views/*"],
-      "@config/*": ["src/config/*"], 
-      "@models/*": ["src/models/*"]
+      "@utils/*": [
+        "src/utils/*"
+      ],
+      "@middleware/*": [
+        "src/middleware/*"
+      ],
+      "@controllers/*": [
+        "src/controllers/*"
+      ],
+      "@routes/*": [
+        "src/routes/*"
+      ],
+      "@services/*": [
+        "src/services/*"
+      ],
+      "@interfaces/*": [
+        "src/interfaces/*"
+      ],
+      "@validators/*": [
+        "src/validators/*"
+      ],
+      "@database/*": [
+        "src/database/*"
+      ],
+      "@mails/*": [
+        "src/mails/*"
+      ],
+      "@views/*": [
+        "src/views/*"
+      ],
+      "@config/*": [
+        "src/config/*"
+      ],
+      "@models/*": [
+        "src/models/*"
+      ],
+      "@libs/*": [
+        "src/libs/*"
+      ],
+       "@jobs/*": [
+        "src/jobs/*"
+      ],
     }
   },
-  "include": ["src"],
-  "exclude": ["node_modules"]
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

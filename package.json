@@ -7,7 +7,7 @@
     "alias:dev": "ts-node scripts/generate-alias.ts",
     "alias:prod": "ts-node scripts/generate-alias.ts --prod",
     "predev": "npm run alias:dev",
-    "dev": "ts-node -r tsconfig-paths/register src/index.ts",
+    "dev": "nodemon",
     "prebuild": "npm run alias:prod",
     "build": "tsc",
     "start": "node -r module-alias/register dist/index.js"
@@ -88,6 +88,8 @@
     "@mails": "src/mails",
     "@views": "src/views",
     "@config": "src/config",
-    "@models": "src/models"
+    "@models": "src/models",
+    "@libs": "src/libs",
+    "@jobs": "src/jobs"
   }
 }

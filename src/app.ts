@@ -8,7 +8,7 @@ import apiRoutes from '@routes/api.routes';
 import i18n from '@config/i18n.config';
 import log from '@utils/logger.utils';
 import { initializeDatabases } from '@database/init.database';
-import { initializeCronJobs } from './cron';
+import { initializeCronJobs, initializeAgendaJobs } from './cron';
 
 class App {
     public express: Application;
@@ -52,7 +52,8 @@ class App {
     }
 
     private initializeCronJobs(): void {
-        initializeCronJobs();
+        // initializeCronJobs();
+        initializeAgendaJobs();
     }
 
     public listen(): void {
