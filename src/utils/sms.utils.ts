@@ -20,9 +20,9 @@ export const sendOtp = async (phone: string) => {
         return await client.verify.v2.services(process.env.TWILIO_VERIFY_SID!)
             .verifications
             .create({ to: phone, channel: 'sms' });
-        console.log('✅ SMS sent:');
+        console.log('✅ OTP SMS sent:');
     } catch (error) {
-        console.error('❌ SMS failed:', error);
+        console.error('❌ OTP SMS failed:', error);
     }
 };
 
