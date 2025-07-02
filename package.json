@@ -10,7 +10,8 @@
     "dev": "nodemon",
     "prebuild": "npm run alias:prod",
     "build": "tsc",
-    "start": "node -r module-alias/register dist/index.js"
+    "start": "node -r module-alias/register dist/index.js",
+    "seed:posts": "ts-node -r tsconfig-paths/register src/seeders/post.seeder.ts"
   },
   "keywords": [],
   "author": "",

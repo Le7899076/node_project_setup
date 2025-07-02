@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose';
 
-import Post from 'src/interfaces/post.interfaces';
+import Post from '@interfaces/post.interfaces';
 
 const PostSchema = new Schema(
     {
