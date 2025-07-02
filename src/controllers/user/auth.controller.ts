@@ -26,7 +26,10 @@ class AuthController extends Controller {
 
         sendSms(phone_number, `Your OTP is ${otp}`);
 
-        return new HttpResponse(res).success(request, 'OTP sent successfully');
+        return new HttpResponse(res).success({
+            otp,
+            phone_number,
+        }, 'OTP sent successfully');
     };
 }
 
