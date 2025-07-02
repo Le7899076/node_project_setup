@@ -9,11 +9,12 @@ import multer from 'multer';
 const router = Router();
 const upload = multer();
 
+
 router
     .get('/posts', PostController.index)
     .post('/posts', validate(postValidator.create), PostController.create);
 
-router
-    .post('/users/register', upload.none(), validate(authValidator.register), AuthController.register);
+router.post('/users/register', upload.none(), validate(authValidator.register), AuthController.register);
+router.post('/users/send-otp', validate(authValidator.sendOtp), AuthController.sendOtp);
 
 export default router;

@@ -19,4 +19,11 @@ const register = Joi.object({
   }),
 });
 
-export default { register };
+const sendOtp = Joi.object({
+  phone_number: Joi.string().required().messages({
+    'string.empty': 'Phone number is required',
+    'any.required': 'Phone number is required',
+  }),
+});
+
+export default { register , sendOtp };
