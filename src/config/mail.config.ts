@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export default {
-    'default': process.env.MAIL_MAILER!,
+    // 'default': process.env.MAIL_MAILER!,
     'mailers': {
         'smtp': {
             'transport': 'smtp',
