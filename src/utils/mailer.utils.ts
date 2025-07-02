@@ -5,7 +5,7 @@ import hbs from 'nodemailer-express-handlebars';
 import path from 'path';
 import dotenv from 'dotenv';
 import log from '@utils/logger.utils';
-import { transporter } from '@libs/node-mailer.libs';
+import { transporter } from '@libs/mailer.libs';
 
 dotenv.config();
 
