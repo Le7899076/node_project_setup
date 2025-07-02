@@ -5,6 +5,7 @@ import postValidator from '@validators/post.validator';
 import authValidator from '@validators/auth.validator';
 import AuthController from '@controllers/user/auth.controller';
 import multer from 'multer';
+import { verifyOtp } from '../utils/sms.utils';
 
 const router = Router();
 const upload = multer();
@@ -16,6 +17,7 @@ router
 
 router
     .post('/users/register', upload.none(), validate(authValidator.register), AuthController.register)
-    .post('/users/send-otp', validate(authValidator.sendOtp), AuthController.sendOtp);
+    .post('/users/send-otp', validate(authValidator.sendOtp), AuthController.sendOtp)
+    .post('/users/verify-otp', AuthController.verifyOtp);
 
 export default router;

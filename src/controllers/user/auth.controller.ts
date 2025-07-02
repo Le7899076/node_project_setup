@@ -2,8 +2,9 @@ import Controller from "@controllers/controller";
 import HttpResponse from "@utils/http.response";
 import { Request, Response, NextFunction } from "express";
 import agenda from "@libs/agenda.libs";
-import { sendSms } from "@utils/sms.utils";
+import { sendSms, sendOtp, verifyOtp } from "@utils/sms.utils";
 import { generateSecureOtp } from "src/helpers/otp.helper";
+import { error } from "console";
 class AuthController extends Controller {
     public register = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
 
@@ -22,14 +23,33 @@ class AuthController extends Controller {
 
         const { phone_number } = request;
 
-        const otp = generateSecureOtp(6);
+        // const otp = generateSecureOtp(6);
 
-        sendSms(phone_number, `Your OTP is ${otp}`);
+        // sendSms(phone_number, `Your OTP is ${otp}`);
+
+        sendOtp(phone_number);
 
         return new HttpResponse(res).success({
-            otp,
+            // otp,
             phone_number,
         }, 'OTP sent successfully');
+    };
+
+    public verifyOtp = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+        const request = req.body;
+
+        const { phone_number, otp } = request;
+
+        let isVerified = await verifyOtp(phone_number, otp);
+
+        if (!isVerified) {
+            return new HttpResponse(res).error("Otp verification failed");
+        }
+
+        return new HttpResponse(res).success({
+            // otp,
+            phone_number,
+        }, 'OTP verified successfully');
     };
 }
 

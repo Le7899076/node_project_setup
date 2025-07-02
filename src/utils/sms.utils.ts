@@ -14,3 +14,28 @@ export const sendSms = async (phone: string, message: string): Promise<void> => 
         console.error('❌ SMS failed:', error);
     }
 };
+
+export const sendOtp = async (phone: string) => {
+    try {
+        return await client.verify.v2.services(process.env.TWILIO_VERIFY_SID!)
+            .verifications
+            .create({ to: phone, channel: 'sms' });
+        console.log('✅ SMS sent:');
+    } catch (error) {
+        console.error('❌ SMS failed:', error);
+    }
+};
+
+export const verifyOtp = async (phone: string, code: string): Promise<boolean> => {
+  try {
+    const verification = await client.verify.v2.services(process.env.TWILIO_VERIFY_SID!)
+      .verificationChecks
+      .create({ to: phone, code });
+
+    return verification.status === 'approved';
+  } catch (error) {
+    console.error('❌ OTP verification failed:', error);
+    return false;
+  }
+};
+
