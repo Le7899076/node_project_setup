@@ -94,6 +94,7 @@
     "@config": "src/config",
     "@models": "src/models",
     "@libs": "src/libs",
-    "@jobs": "src/jobs"
+    "@jobs": "src/jobs",
+    "@helpers": "src/helpers"
   }
 }

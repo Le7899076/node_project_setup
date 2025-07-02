@@ -47,10 +47,17 @@
       "@libs/*": [
         "src/libs/*"
       ],
-       "@jobs/*": [
+      "@jobs/*": [
         "src/jobs/*"
       ],
-    }
+      "@helpers/*": [
+        "src/helpers/*"
+      ]
+    },
+    "typeRoots": [
+      "src/types",
+      "node_modules/@types"
+    ],
   },
   "include": [
     "src"

@@ -1,4 +1,4 @@
-import express, { Application } from 'express';
+import express, { Application, NextFunction } from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import morgan from 'morgan';
@@ -12,6 +12,7 @@ import { initializeCronJobs, initializeAgendaJobs } from './cron';
 import path from 'path';
 import { engine } from 'express-handlebars';
 import webRoutes from '@routes/web.routes';
+import responseMiddleware from '@middleware/response.middleware';
 
 class App {
     public express: Application;
@@ -25,7 +26,7 @@ class App {
         this.initializeMiddleware();
         this.initializeLocalization();
         this.initializeRoutes();
-        this.initializeErrorHandling();
+        // this.initializeErrorHandling();
         this.initializeCronJobs();
         this.configViewEngine();
 
@@ -39,6 +40,8 @@ class App {
         this.express.use(express.urlencoded({ extended: true }));
         this.express.use(compression());
         this.express.use(express.static(path.join(process.cwd(), 'public')));
+        this.express.use(responseMiddleware);
+        this.express.use(errorMiddleware);
     }
 
     private initializeRoutes(): void {
@@ -46,9 +49,9 @@ class App {
         this.express.use('/api', apiRoutes);
     }
 
-    private initializeErrorHandling(): void {
-        this.express.use(errorMiddleware);
-    }
+    // private initializeErrorHandling(): void {
+        
+    // }
 
     private initializeDatabases(): void {
         initializeDatabases();

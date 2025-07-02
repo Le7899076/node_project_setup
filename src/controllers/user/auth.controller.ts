@@ -3,7 +3,7 @@ import HttpResponse from "@utils/http.response";
 import { Request, Response, NextFunction } from "express";
 import agenda from "@libs/agenda.libs";
 import { sendSms, sendOtp, verifyOtp } from "@utils/sms.utils";
-import { generateSecureOtp } from "src/helpers/otp.helper";
+import { generateSecureOtp } from "@helpers/otp.helper";
 import { error } from "console";
 class AuthController extends Controller {
     public register = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
@@ -15,7 +15,7 @@ class AuthController extends Controller {
             token: 'token',
         });
 
-        return new HttpResponse(res).success(request, 'User registered successfully');
+        return res.success(request, 'User registered successfully');
     };
 
     public sendOtp = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
