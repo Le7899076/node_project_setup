@@ -1,11 +1,8 @@
 // src/utils/mailer.ts
-import nodemailer, { Transporter, SendMailOptions } from 'nodemailer';
-import { createTransport } from 'nodemailer';
-import hbs from 'nodemailer-express-handlebars';
-import path from 'path';
+import { Transporter, SendMailOptions } from 'nodemailer';
 import dotenv from 'dotenv';
 import log from '@utils/logger.utils';
-import { transporter } from '@libs/mailer.libs';
+import transporter  from '@libs/mailer.libs';
 
 dotenv.config();
 
@@ -14,32 +11,6 @@ class Mailer {
 
   constructor() {
     this.transporter = transporter;
-
-    // Setup Handlebars templating engine
-    this.transporter.use(
-      'compile',
-      hbs({
-        viewEngine: {
-          extname: '.hbs',
-          partialsDir: path.resolve(process.cwd(), 'views/emails'),
-          defaultLayout: false,
-        },
-        viewPath: path.resolve(process.cwd(), 'views/emails'),
-        extName: '.hbs',
-      })
-    );
-
-    this.verifyConnection();
-  }
-
-  private verifyConnection() {
-    this.transporter.verify((error, success) => {
-      if (error) {
-        console.error('Email server connection failed:', error);
-      } else {
-        log('✅ Email server connected successfully');
-      }
-    });
   }
 
   // support both HTML or HBS

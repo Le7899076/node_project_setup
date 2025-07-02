@@ -21,4 +21,7 @@ i18next
     },
   });
 
-export default { i18next, middleware };
+export default {
+  i18next,
+  middleware
+};
