@@ -5,7 +5,7 @@ import morgan from 'morgan';
 import compression from 'compression';
 import errorMiddleware from '@middleware/error.middleware';
 import apiRoutes from '@routes/api.routes';
-import i18n from '@config/i18n.config';
+import i18n from '@libs/i18n.libs';
 import log from '@utils/logger.utils';
 import { initializeDatabases } from '@database/init.database';
 import { initializeCronJobs, initializeAgendaJobs } from './cron';
