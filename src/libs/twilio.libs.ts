@@ -1,12 +1,9 @@
-// src/lib/twilio.ts
 import { Twilio } from 'twilio';
 
-import dotenv from 'dotenv';
+import config from '@config/services.config';
 
-dotenv.config();
-
-const accountSid = process.env.TWILIO_ACCOUNT_SID!;
-const authToken = process.env.TWILIO_AUTH_TOKEN!;
+const accountSid = config.twilio.account_sid;
+const authToken = config.twilio.auth_token;
 
 const client = new Twilio(accountSid, authToken);
 
