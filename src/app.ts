@@ -89,6 +89,7 @@ class App {
             .on('connection', (socket) => {
                 console.log(`🔌 Client connected: ${socket.id} & userId=${socket.handshake.query.userId}`);
 
+                /*only used in logs*/
                 fetchAllUsers().then(result => console.log("active users:", result));
 
                 socket.onAny((event, args) => {
@@ -100,11 +101,10 @@ class App {
 
                     let userId = socket.handshake.query.userId as string;
 
+                    /*only used in logs*/
                     if (userId) {
                         removeUser(userId);
-                        fetchAllUsers().then(function (result) {
-                            console.log("active users:", result);
-                        }).catch(console.error);
+                        fetchAllUsers().then(result => console.log("active users:", result));
                     }
                 });
             });
