@@ -15,7 +15,7 @@ import webRoutes from '@routes/web.routes';
 import responseMiddleware from '@middleware/response.middleware';
 import { Server } from 'socket.io';
 import http from 'http';
-import { chatHandler } from '@handlers/chat.handlers';
+import { chatSocketHandler } from '@handlers/chat.socket.handlers';
 import socketMiddleware from '@middleware/socket.middleware';
 
 class App {
@@ -89,7 +89,7 @@ class App {
 
                 socket.onAny((event, args) => {
                     console.log(`Event: ${event}`, args);
-                    chatHandler(event, args, socket, this.io);
+                    chatSocketHandler(event, args, socket, this.io);
                 });
 
                 socket.on('disconnect', () => {
