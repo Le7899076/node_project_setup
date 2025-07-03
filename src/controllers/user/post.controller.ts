@@ -17,7 +17,7 @@ class PostController extends Controller {
         const { title, body } = req.body;
         const post = await this.PostService.create(title, body);
 
-        return new HttpResponse(res).success(
+        return res.success(
             PostResource.transform(post),
             req.t('message.post.created'),
         );
