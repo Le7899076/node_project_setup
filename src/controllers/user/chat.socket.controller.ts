@@ -2,7 +2,7 @@
 import { errorSocket } from "@utils/error.socket"
 
 export default class chatSocketController {
-    public static async handleMessage(socket: any, data: any, io: any) {
+    public static async handleMessage(data: any, socket: any, io: any) {
         try {
             socket.broadcast.emit('message', data);
         } catch (error: any) {

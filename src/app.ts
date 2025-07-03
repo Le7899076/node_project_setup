@@ -16,6 +16,7 @@ import responseMiddleware from '@middleware/response.middleware';
 import { Server } from 'socket.io';
 import http from 'http';
 import { chatHandler } from '@handlers/chat.handlers';
+import socketMiddleware from '@middleware/socket.middleware';
 
 class App {
     public express: Application;
@@ -82,18 +83,19 @@ class App {
     }
 
     private initializeSocket(): void {
-        this.io.on('connection', (socket) => {
-            console.log(`🔌 Client connected: ${socket.id}`);
+        this.io.use(socketMiddleware)
+            .on('connection', (socket) => {
+                console.log(`🔌 Client connected: ${socket.id}`);
 
-            socket.onAny((event, args) => {
-                console.log(`Event: ${event}`, args);
-                chatHandler(event, args, socket, this.io);
-            });
+                socket.onAny((event, args) => {
+                    console.log(`Event: ${event}`, args);
+                    chatHandler(event, args, socket, this.io);
+                });
 
-            socket.on('disconnect', () => {
-                console.log(`🔌 Client disconnected: ${socket.id}`);
+                socket.on('disconnect', () => {
+                    console.log(`🔌 Client disconnected: ${socket.id}`);
+                });
             });
-        });
     }
 
     private initializeRoutes(): void {
