@@ -52,8 +52,14 @@
       ],
       "@helpers/*": [
         "src/helpers/*"
-      ]
+      ],
+      
+      "@handlers/*": [
+        "src/handlers/*"
+      ],
     },
+
+
     "typeRoots": [
       "src/types",
       "node_modules/@types"

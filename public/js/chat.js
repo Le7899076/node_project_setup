@@ -6,10 +6,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const sendButton = document.getElementById('sendButton');
 
   // Handle incoming messages
-  socket.on('message', function (msg) {
+  socket.on('message', function (data) {
+    console.log(data);
     const li = document.createElement('li');
     li.className = 'message p-3 rounded-lg received mr-auto';
-    li.textContent = msg;
+    li.textContent = data.message;
     messages.appendChild(li);
     messages.scrollTop = messages.scrollHeight;
   });
@@ -19,7 +20,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const msg = input.value.trim();
     if (msg) {
       // Emit message to server
-      socket.emit('message', msg);
+      socket.emit('message', {
+        message: msg,
+      });
       // Display sent message locally
       const li = document.createElement('li');
       li.className = 'message p-3 rounded-lg sent ml-auto';

@@ -15,6 +15,7 @@ import webRoutes from '@routes/web.routes';
 import responseMiddleware from '@middleware/response.middleware';
 import { Server } from 'socket.io';
 import http from 'http';
+import { chatHandler } from '@handlers/chat.handlers';
 
 class App {
     public express: Application;
@@ -58,7 +59,7 @@ class App {
             helmet.contentSecurityPolicy({
                 directives: {
                     defaultSrc: ["'self'"],
-                    scriptSrc: ["'self'",'https://cdn.tailwindcss.com', "'unsafe-inline'"],
+                    scriptSrc: ["'self'", 'https://cdn.tailwindcss.com', "'unsafe-inline'"],
                     styleSrc: ["'self'", "'unsafe-inline'", 'https://cdn.tailwindcss.com'],
                     connectSrc: [
                         "'self'",
@@ -84,14 +85,9 @@ class App {
         this.io.on('connection', (socket) => {
             console.log(`🔌 Client connected: ${socket.id}`);
 
-            socket.onAny((event, ...args) => {
-                console.log(`📥 Event received: ${event}`, args);
-
-                // You can conditionally handle events
-                if (event === 'message') {
-                    // broadcast or do something
-                    this.io.emit('message', args[0]);
-                }
+            socket.onAny((event, args) => {
+                console.log(`Event: ${event}`, args);
+                chatHandler(event, args, socket, this.io);
             });
 
             socket.on('disconnect', () => {

@@ -16,3 +16,4 @@ addAlias('@models', path.join(basePath, 'models'));
 addAlias('@libs', path.join(basePath, 'libs'));
 addAlias('@jobs', path.join(basePath, 'jobs'));
 addAlias('@helpers', path.join(basePath, 'helpers'));
+addAlias('@handlers', path.join(basePath, 'handlers'));
