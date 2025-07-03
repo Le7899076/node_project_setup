@@ -1,9 +1,9 @@
-import chatController from "@controllers/user/chat.controller";
+import chatSocketController from "@controllers/user/chat.socket.controller";
 
 export const chatHandler = (event: string, data: any[], socket: any, io: any) => {
     switch (event) {
         case 'message':
-            chatController.handleMessage(data, socket, io);
+            chatSocketController.handleMessage(data, socket, io);
             break;
         default:
             console.warn(`Unhandled event: ${event}`);
