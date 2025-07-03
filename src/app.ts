@@ -87,9 +87,9 @@ class App {
         this.io
             .use(socketMiddleware)
             .on('connection', (socket) => {
-                console.log(`🔌 Client connected: ${socket.id} & userId=${socket.handshake.query.userId}`);
-
-                /*only used in logs*/
+                 /*only used in logs*/
+                const { userId, userRole } = socket.handshake.query;
+                console.log(`🔌 Client connected: ${socket.id} & userId=${userId} & userRole=${userRole}`);
                 fetchAllUsers().then(result => console.log("active users:", result));
 
                 socket.onAny((event, args) => {
@@ -106,6 +106,10 @@ class App {
                         removeUser(userId);
                         fetchAllUsers().then(result => console.log("active users:", result));
                     }
+                });
+                
+                socket.on('error', (err) => {
+                    console.error('Socket error:', err);
                 });
             });
     }

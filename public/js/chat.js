@@ -3,6 +3,8 @@ document.addEventListener("DOMContentLoaded", () => {
   console.log(userId);
   const socket = io(`http://localhost:3001?key=socket_001&userId=${userId}&userRole=user`);
 
+  joinRoom('users');
+
   socket.on('connect', () => {
     console.log("✅ Connected socket id: " + socket.id);
   });
@@ -19,6 +21,10 @@ document.addEventListener("DOMContentLoaded", () => {
     messages.scrollTop = messages.scrollHeight;
   });
 
+  socket.on('ACK_JOIN_ROOM',function(data){
+    console.log(data);
+  });
+
   function sendMessage() {
     const msg = input.value.trim();
     if (msg) {
@@ -31,6 +37,12 @@ document.addEventListener("DOMContentLoaded", () => {
       messages.scrollTop = messages.scrollHeight;
       input.value = '';
     }
+  }
+
+  function joinRoom(room) {
+    socket.emit('JOIN_ROOM', {
+      room: room,
+    });
   }
 
   sendButton.addEventListener('click', sendMessage);

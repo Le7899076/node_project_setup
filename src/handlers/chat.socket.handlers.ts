@@ -8,6 +8,9 @@ export const chatHandler = (event: string, data: any[], socket: any, io: any) =>
         case 'message':
             chatSocketController.handleMessage(data, socket, io);
             break;
+        case 'JOIN_ROOM':
+            chatSocketController.handleJoinRoom(data, socket, io);
+            break;
         default:
             console.warn(`Unhandled event: ${event}`);
     }
