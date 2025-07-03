@@ -17,6 +17,7 @@ import { Server } from 'socket.io';
 import http from 'http';
 import { chatHandler } from '@handlers/chat.socket.handlers';
 import socketMiddleware from '@middleware/socket.middleware';
+import { fetchAllUsers, getUser, removeUser } from '@utils/socket.utils';
 
 class App {
     public express: Application;
@@ -86,15 +87,25 @@ class App {
         this.io
             .use(socketMiddleware)
             .on('connection', (socket) => {
-                console.log(`🔌 Client connected: ${socket.id}`);
+                console.log(`🔌 Client connected: ${socket.id} & userId=${socket.handshake.query.userId}`);
+
+                fetchAllUsers().then(result => console.log("active users:", result));
 
                 socket.onAny((event, args) => {
-                    console.log(`Event: ${event}`, args);
                     chatHandler(event, args, socket, this.io);
                 });
 
                 socket.on('disconnect', () => {
-                    console.log(`🔌 Client disconnected: ${socket.id}`);
+                    console.log(`🔌 Client disconnected: socketId=${socket.id} & and userId=${socket.handshake.query.userId}`);
+
+                    let userId = socket.handshake.query.userId as string;
+
+                    if (userId) {
+                        removeUser(userId);
+                        fetchAllUsers().then(function (result) {
+                            console.log("active users:", result);
+                        }).catch(console.error);
+                    }
                 });
             });
     }
