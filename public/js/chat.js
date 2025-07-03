@@ -1,6 +1,6 @@
 
 document.addEventListener("DOMContentLoaded", () => {
-  const socket = io('http://localhost:3001?key=socket_001&userId=1'); // Adjust to your server URL
+  const socket = io('http://localhost:3001?key=socket_001&userId=1&userRole=user'); // Adjust to your server URL
   const messages = document.getElementById('messages');
   const input = document.getElementById('msg');
   const sendButton = document.getElementById('sendButton');

@@ -83,7 +83,8 @@ class App {
     }
 
     private initializeSocket(): void {
-        this.io.use(socketMiddleware)
+        this.io
+            .use(socketMiddleware)
             .on('connection', (socket) => {
                 console.log(`🔌 Client connected: ${socket.id}`);
 
