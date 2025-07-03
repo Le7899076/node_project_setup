@@ -1,1 +1,30 @@
-header
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for chat bubbles and scrollbar */
+        .chat-container {
+            scrollbar-width: thin;
+            scrollbar-color: #6b7280 #e5e7eb;
+        }
+        .chat-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        .chat-container::-webkit-scrollbar-track {
+            background: #e5e7eb;
+        }
+        .chat-container::-webkit-scrollbar-thumb {
+            background: #6b7280;
+            border-radius: 4px;
+        }
+        .message {
+            max-width: 70%;
+            word-wrap: break-word;
+        }
+        .sent {
+            background-color: #3b82f6;
+            color: white;
+        }
+        .received {
+            background-color: #e5e7eb;
+            color: #111827;
+        }
+    </style>

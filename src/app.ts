@@ -13,27 +13,62 @@ import path from 'path';
 import { engine } from 'express-handlebars';
 import webRoutes from '@routes/web.routes';
 import responseMiddleware from '@middleware/response.middleware';
+import { Server } from 'socket.io';
+import http from 'http';
 
 class App {
     public express: Application;
     public port: number;
 
+    public server: http.Server;
+    public io: Server;
     constructor(port: number) {
         this.express = express();
+
+        this.server = http.createServer(this.express);
+
+        this.io = new Server(this.server, {
+            serveClient: true,
+            cors: {
+                origin: "*",
+                credentials: true,
+            },
+            allowEIO3: true,
+            pingTimeout: 7200000,
+            pingInterval: 25000
+        });
+
         this.port = port;
 
+        this.initialize();
+    }
+
+    private initialize(): void {
+        this.initializeSocket();
         this.initializeDatabases();
         this.initializeMiddleware();
         this.initializeLocalization();
         this.initializeRoutes();
-        // this.initializeErrorHandling();
         this.initializeCronJobs();
         this.configViewEngine();
-
     }
 
     private initializeMiddleware(): void {
-        this.express.use(helmet());
+        this.express.use(
+            helmet.contentSecurityPolicy({
+                directives: {
+                    defaultSrc: ["'self'"],
+                    scriptSrc: ["'self'",'https://cdn.tailwindcss.com', "'unsafe-inline'"],
+                    styleSrc: ["'self'", "'unsafe-inline'", 'https://cdn.tailwindcss.com'],
+                    connectSrc: [
+                        "'self'",
+                        "http://localhost:3001",
+                        "ws://localhost:3001"
+                    ],
+                },
+            })
+        );
+
         this.express.use(cors());
         this.express.use(morgan('dev'));
         this.express.use(express.json());
@@ -42,6 +77,27 @@ class App {
         this.express.use(express.static(path.join(process.cwd(), 'public')));
         this.express.use(responseMiddleware);
         this.express.use(errorMiddleware);
+
+    }
+
+    private initializeSocket(): void {
+        this.io.on('connection', (socket) => {
+            console.log(`🔌 Client connected: ${socket.id}`);
+
+            socket.onAny((event, ...args) => {
+                console.log(`📥 Event received: ${event}`, args);
+
+                // You can conditionally handle events
+                if (event === 'message') {
+                    // broadcast or do something
+                    this.io.emit('message', args[0]);
+                }
+            });
+
+            socket.on('disconnect', () => {
+                console.log(`🔌 Client disconnected: ${socket.id}`);
+            });
+        });
     }
 
     private initializeRoutes(): void {
@@ -50,7 +106,7 @@ class App {
     }
 
     // private initializeErrorHandling(): void {
-        
+
     // }
 
     private initializeDatabases(): void {
@@ -78,7 +134,8 @@ class App {
     }
 
     public listen(): void {
-        this.express.listen(this.port, () => {
+        this.server.listen(this.port, () => {
+            log(`🚀 Socket.IO server is running on port ${this.port}`);
             log(`✅ App listening on the port ${this.port}`);
         });
     }
