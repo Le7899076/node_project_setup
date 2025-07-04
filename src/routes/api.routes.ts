@@ -5,7 +5,7 @@ import postValidator from '@validators/post.validator';
 import authValidator from '@validators/auth.validator';
 import AuthController from '@controllers/user/auth.controller';
 import multer from 'multer';
-import { verifyOtp } from '../utils/sms.utils';
+import { verifyOtp } from '@utils/sms.utils';
 
 const router = Router();
 const upload = multer();

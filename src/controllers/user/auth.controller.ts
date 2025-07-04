@@ -5,17 +5,33 @@ import agenda from "@libs/agenda.libs";
 import { sendSms, sendOtp, verifyOtp } from "@utils/sms.utils";
 import { generateSecureOtp } from "@helpers/otp.helper";
 import { error } from "console";
+import User from "@models/user.model";
+import bcrypt from 'bcrypt';
 class AuthController extends Controller {
     public register = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+        let request = req.body;
+        const { firstName, lastName, email, password } = request;
 
-        const request = req.body;
+        const userExists = await User.findOne({ email });
 
-        await agenda.now('send email verification mail', {
-            email: request.email,
-            token: 'token',
+        if (userExists) {
+            return res.error("This email is already registered.", 200);
+        }
+
+        const user = await User.create({
+            firstName,
+            lastName,
+            email,
+            password: bcrypt.hashSync(password, 10),
         });
 
-        return res.success(request, 'User registered successfully');
+
+        // await agenda.now('send email verification mail', {
+        //     email: email,
+        //     token: 'token',
+        // });
+
+        return res.success(user, 'Registered successfully');
     };
 
     public sendOtp = async (req: Request, res: Response, next: NextFunction): Promise<any> => {

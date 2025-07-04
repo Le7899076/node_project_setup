@@ -1,7 +1,8 @@
 
+import Controller from "@controllers/controller";
 import { errorSocket } from "@utils/error.socket";
 import logger from "@utils/winston.logger.utils";
-export default class chatSocketController {
+export default class chatSocketController extends Controller {
     public static async handleMessage(data: any, socket: any, io: any) {
         try {
             logger.info("socket user id: " + socket.userId + " & socket id: " + socket.id);
