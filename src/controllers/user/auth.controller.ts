@@ -8,6 +8,7 @@ import { error } from "console";
 import User from "@models/user.model";
 import bcrypt from 'bcrypt';
 import UserResource from "@utils/resources/user.resource";
+import { generateToken } from "@utils/jwt.utils";
 class AuthController extends Controller {
     public register = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
         let request = req.body;
@@ -52,7 +53,16 @@ class AuthController extends Controller {
             return res.error("Invalid credentials.", 200);
         }
 
-        return res.success(UserResource.transform(user), 'Login successfully');
+        //generate token for user
+
+        const token = generateToken(user);
+
+        return res.json({
+            status: true,
+            message: 'Login successfully',
+            token,
+            data: UserResource.transform(user),
+        });
     };
 
     public sendOtp = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
