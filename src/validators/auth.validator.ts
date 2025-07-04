@@ -26,4 +26,15 @@ const sendOtp = Joi.object({
   }),
 });
 
-export default { register , sendOtp };
+const login = Joi.object({
+  email: Joi.string().required().messages({
+    'string.empty': 'Email is required',
+    'any.required': 'Email is required',
+  }),
+  password: Joi.string().required().messages({
+    'string.empty': 'Password is required',
+    'any.required': 'Password is required',
+  }),
+});
+
+export default { register, sendOtp, login };

@@ -35,6 +35,26 @@ class AuthController extends Controller {
         return res.success(UserResource.transform(user), 'Registered successfully');
     };
 
+
+    public login = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+        const request = req.body;
+        const { email, password } = request;
+
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.error("Invalid credentials.", 200);
+        }
+
+        const isPasswordMatch = bcrypt.compareSync(password, user.password);
+
+        if (!isPasswordMatch) {
+            return res.error("Invalid credentials.", 200);
+        }
+
+        return res.success(UserResource.transform(user), 'Login successfully');
+    };
+
     public sendOtp = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
         const request = req.body;
 

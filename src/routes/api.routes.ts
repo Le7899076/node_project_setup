@@ -17,6 +17,7 @@ router
 
 router
     .post('/users/register', upload.none(), validate(authValidator.register), AuthController.register)
+    .post('/users/login', upload.none(), validate(authValidator.login), AuthController.login)
     .post('/users/send-otp', validate(authValidator.sendOtp), AuthController.sendOtp)
     .post('/users/verify-otp', AuthController.verifyOtp);
 
