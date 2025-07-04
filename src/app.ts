@@ -36,6 +36,7 @@ class App {
                 origin: "*",
                 credentials: true,
             },
+            connectionStateRecovery: {},
             allowEIO3: true,
             pingTimeout: 7200000,
             pingInterval: 25000
@@ -87,7 +88,7 @@ class App {
         this.io
             .use(socketMiddleware)
             .on('connection', (socket) => {
-                 /*only used in logs*/
+                /*only used in logs*/
                 const { userId, userRole } = socket.handshake.query;
                 console.log(`🔌 Client connected: ${socket.id} & userId=${userId} & userRole=${userRole}`);
                 fetchAllUsers().then(result => console.log("active users:", result));
@@ -107,7 +108,7 @@ class App {
                         fetchAllUsers().then(result => console.log("active users:", result));
                     }
                 });
-                
+
                 socket.on('error', (err) => {
                     console.error('Socket error:', err);
                 });
