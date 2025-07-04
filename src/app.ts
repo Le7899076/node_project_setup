@@ -35,6 +35,7 @@ class App {
             cors: {
                 origin: "*",
                 credentials: true,
+                allowedHeaders: ['x-token']
             },
             connectionStateRecovery: {},
             allowEIO3: true,

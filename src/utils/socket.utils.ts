@@ -5,7 +5,7 @@ dotenv.config();
 
 const useRedis = process.env.SOCKET_STORE_DRIVER === 'redis';
 
-const memoryStore = new Map<number, string>();
+const memoryStore = new Map<string, string>();
 let redisClient: ReturnType<typeof createClient>;
 
 if (useRedis) {
@@ -18,7 +18,7 @@ export const setUser = async (userId: string | number, socketId: string) => {
   if (useRedis) {
     await redisClient.set(key, socketId);
   } else {
-    memoryStore.set(Number(userId), socketId);
+    memoryStore.set(String(userId), socketId);
   }
 };
 
@@ -27,7 +27,7 @@ export const getUser = async (userId: string | number): Promise<string | undefin
   if (useRedis) {
     return await redisClient.get(key) || undefined;
   } else {
-    return memoryStore.get(Number(userId));
+    return memoryStore.get(String(userId));
   }
 };
 
@@ -36,25 +36,21 @@ export const removeUser = async (userId: string | number) => {
   if (useRedis) {
     await redisClient.del(key);
   } else {
-    memoryStore.delete(Number(userId));
+    memoryStore.delete(String(userId));
   }
 };
 
-export const fetchAllUsers = async (): Promise<Record<number, string>> => {
+export const fetchAllUsers = async (): Promise<Record<string, string>> => {
   if (useRedis) {
     const keys = await redisClient.keys('socket:*');
-    const result: Record<number, string> = {};
+    const result: Record<string, string> = {};
     for (const key of keys) {
       const userId = key.replace('socket:', '');
       const socketId = await redisClient.get(key);
-      if (socketId) result[+userId] = socketId;
+      if (socketId) result[userId] = socketId;
     }
     return result;
   } else {
     return Object.fromEntries(memoryStore.entries());
   }
-};
-
-export const getUTCDateTime = (): string => {
-  return new Date().toISOString().slice(0, 19).replace('T', ' ');
 };

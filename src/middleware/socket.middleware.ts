@@ -1,28 +1,33 @@
-
 import { setUser } from '@utils/socket.utils';
+import config from '@config/auth.config';
+import { JwtPayload, verify } from 'jsonwebtoken';
+import User from '@models/user.model';
 
-
-const socketMiddleware = async (socket: any, next: any) => {
-
-    const userId = socket.handshake.query.userId;
-    const userRole = socket.handshake.query.userRole;
-    const key = socket.handshake.query.key;
-
+const socketMiddleware = async (socket: any, next: (err?: Error) => void) => {
+    const { key } = socket.handshake.query;
     if (key !== 'socket_001') {
-        const err = new Error("Invalid key");
-        socket.disconnect(true);
-        next(err);
+        return next(new Error("Invalid key"));
     }
 
-    if (!userId || !userRole) {
-        const err = new Error("Invalid user id or user role");
-        socket.disconnect(true);
-        next(err);
+    const token = socket.handshake.auth?.token || socket.handshake.headers['x-token'];
+    
+    if (!token) {
+        return next(new Error("Unauthorized"));
     }
 
-    setUser(userId, socket.id);
-    socket.userId = userId;
-    next();
-}
+    try {
+        const decoded = verify(token.replace('Bearer ', ''), config.jwt.secret) as JwtPayload;
+        const user = await User.findById(decoded.id);
+        if (!user) {
+            return next(new Error("User not found"));
+        }
+
+        socket.data.user = user;
+        await setUser(user.id, socket.id); // optional, only if you're mapping userId to socketId
+        next();
+    } catch (err) {
+        next(new Error("Invalid token"));
+    }
+};
 
 export default socketMiddleware;
