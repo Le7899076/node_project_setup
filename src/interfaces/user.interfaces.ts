@@ -1,6 +1,10 @@
 import { Document } from 'mongoose';
 
-export default interface Post extends Document {
-   title : string;
-   body : string;
+export default interface User extends Document {
+   firstName : string;
+   lastName : string;
+   email : string;
+   password : string;
+   createdAt : Date;
+   updatedAt : Date;
 }

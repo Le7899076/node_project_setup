@@ -7,6 +7,7 @@ import { generateSecureOtp } from "@helpers/otp.helper";
 import { error } from "console";
 import User from "@models/user.model";
 import bcrypt from 'bcrypt';
+import UserResource from "@utils/resources/user.resource";
 class AuthController extends Controller {
     public register = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
         let request = req.body;
@@ -31,7 +32,7 @@ class AuthController extends Controller {
         //     token: 'token',
         // });
 
-        return res.success(user, 'Registered successfully');
+        return res.success(UserResource.transform(user), 'Registered successfully');
     };
 
     public sendOtp = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
