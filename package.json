@@ -46,6 +46,7 @@
   "dependencies": {
     "@prisma/client": "^6.10.1",
     "@socket.io/mongo-adapter": "^0.3.2",
+    "@socket.io/mongo-emitter": "^0.2.0",
     "@tailwindcss/vite": "^4.1.11",
     "@types/joi": "^17.2.2",
     "agenda": "^5.0.0",

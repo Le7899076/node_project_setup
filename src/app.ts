@@ -1,4 +1,3 @@
-// src/app.ts
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
@@ -19,87 +18,116 @@ import http from 'http';
 import { chatHandler } from '@handlers/chat.socket.handlers';
 import socketMiddleware from '@middleware/socket.middleware';
 import { fetchAllUsers, removeUser } from '@utils/socket.utils';
+import { createAdapter } from '@socket.io/mongo-adapter';
+import { MongoClient } from 'mongodb';
+import databaseConfig from '@config/database.config';
+// Interface for server configuration
+interface ServerConfig {
+  port: number;
+}
 
-// App configuration
-const port = Number(process.env.PORT) || 3001;
-const app = express();
-const server = http.createServer(app);
-const io = new Server(server, {
-  serveClient: true,
-  cors: {
-    origin: '*',
-    credentials: true,
-    allowedHeaders: ['x-token'],
-  },
-  connectionStateRecovery: {},
-  allowEIO3: true,
-  pingTimeout: 7200000,
-  pingInterval: 25000,
-});
+// Function to create and configure a single server instance
+const createServer = (config: ServerConfig) => {
+  const { port } = config;
+  const app = express();
+  const server = http.createServer(app);
+  const io = new Server(server, {
+    serveClient: true,
+    cors: {
+      origin: '*',
+      credentials: true,
+      allowedHeaders: ['x-token'],
+    },
+    connectionStateRecovery: {},
+    allowEIO3: true,
+    pingTimeout: 7200000,
+    pingInterval: 25000,
+  });
 
-// ------------------------
-// Setup Sequence Functions
-// ------------------------
+  // ------------------------
+  // Setup Sequence Functions
+  // ------------------------
 
-const setupMiddleware = () => {
-  app.use(
-    helmet.contentSecurityPolicy({
-      directives: {
-        defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", 'https://cdn.tailwindcss.com', "'unsafe-inline'"],
-        styleSrc: ["'self'", "'unsafe-inline'", 'https://cdn.tailwindcss.com'],
-        connectSrc: ["'self'", "http://localhost:3001", "ws://localhost:3001"],
-      },
-    })
-  );
+  const setupMiddleware = () => {
+    app.use(
+      helmet.contentSecurityPolicy({
+        directives: {
+          defaultSrc: ["'self'"],
+          scriptSrc: ["'self'", 'https://cdn.tailwindcss.com', "'unsafe-inline'"],
+          styleSrc: ["'self'", "'unsafe-inline'", 'https://cdn.tailwindcss.com'],
+          connectSrc: ["'self'", `http://localhost:${port}`, `ws://localhost:${port}`],
+        },
+      })
+    );
 
-  app.use(cors());
-  app.use(morgan('dev'));
-  app.use(express.json());
-  app.use(express.urlencoded({ extended: true }));
-  app.use(compression());
-  app.use(express.static(path.join(process.cwd(), 'public')));
-  app.use(responseMiddleware);
-  app.use(errorMiddleware);
-};
+    app.use(cors());
+    app.use(morgan('dev'));
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
+    app.use(compression());
+    app.use(express.static(path.join(process.cwd(), 'public')));
+    app.use(responseMiddleware);
+    app.use(errorMiddleware);
+  };
 
-const setupViewEngine = () => {
-  app.engine(
-    'hbs',
-    engine({
-      extname: 'hbs',
-      defaultLayout: 'main',
-      layoutsDir: path.join(process.cwd(), 'views', 'layouts'),
-      partialsDir: path.join(process.cwd(), 'views', 'partials'),
-    })
-  );
-  app.set('view engine', 'hbs');
-  app.set('views', path.join(process.cwd(), 'views'));
-};
+  const setupViewEngine = () => {
+    app.engine(
+      'hbs',
+      engine({
+        extname: 'hbs',
+        defaultLayout: 'main',
+        layoutsDir: path.join(process.cwd(), 'views', 'layouts'),
+        partialsDir: path.join(process.cwd(), 'views', 'partials'),
+      })
+    );
+    app.set('view engine', 'hbs');
+    app.set('views', path.join(process.cwd(), 'views'));
+  };
 
-const setupLocalization = () => {
-  app.use(i18n.middleware.handle(i18n.i18next));
-};
+  const setupLocalization = () => {
+    app.use(i18n.middleware.handle(i18n.i18next));
+  };
 
-const setupRoutes = () => {
-  app.use('/', webRoutes);
-  app.use('/api', apiRoutes);
-};
+  const setupRoutes = () => {
+    app.use('/', webRoutes);
+    app.use('/api', apiRoutes);
+  };
 
-const setupSocket = () => {
+const setupSocket = async () => {
+  const COLLECTION_NAME = "socket_io_adaptor_events";
+  const MONGO_URL= "mongodb://localhost:27017/?replicaSet=rs0";
+  const DB_NAME = 'myProject';
+
+  const mongoClient = new MongoClient(MONGO_URL);
+  await mongoClient.connect();
+
+  const db = mongoClient.db(DB_NAME);
+
+  // Create capped collection if not exists
+  const collections = await db.listCollections({ name: COLLECTION_NAME }).toArray();
+  if (collections.length === 0) {
+    await db.createCollection(COLLECTION_NAME, {
+      capped: true,
+      size: 1e6,
+    });
+  }
+
+  // Apply adapter
+  io.adapter(createAdapter(db.collection(COLLECTION_NAME)));
+
   io.use(socketMiddleware).on('connection', (socket) => {
     const user = socket.data.user;
     const userId = user?.id;
 
     if (userId) {
       socket.join(`USER_${userId}`);
-      console.log(`Socket ${socket.id} joined room USER_${userId}`);
+      console.log(`Socket ${socket.id} joined room USER_${userId} on port ${port}`);
     }
 
-    console.log(`🔌 Client connected: ${socket.id} & userId=${userId}`);
+    console.log(`🔌 Client connected: ${socket.id} & userId=${userId} on port ${port}`);
 
     fetchAllUsers().then((result) =>
-      console.log('active users:', result)
+      console.log(`active users on port ${port}:`, result)
     );
 
     socket.onAny((event, args) => {
@@ -109,39 +137,54 @@ const setupSocket = () => {
     socket.on('disconnect', () => {
       const userId = socket.handshake.query.userId as string;
       console.log(
-        `🔌 Client disconnected: socketId=${socket.id} & userId=${userId}`
+        `🔌 Client disconnected: socketId=${socket.id} & userId=${userId} on port ${port}`
       );
       if (userId) {
         removeUser(userId);
         fetchAllUsers().then((result) =>
-          console.log('active users:', result)
+          console.log(`active users on port ${port}:`, result)
         );
       }
     });
 
     socket.on('error', (err) => {
-      console.error('Socket error:', err);
+      console.error(`Socket error on port ${port}:`, err);
     });
   });
 };
 
-// ------------------------
-// Bootstrap the Application
-// ------------------------
 
-const bootstrap = async () => {
-  setupSocket();
-  initializeDatabases();
-  setupMiddleware();
-  setupLocalization();
-  setupRoutes();
-  initializeAgendaJobs(); // or initializeCronJobs();
-  setupViewEngine();
+  // ------------------------
+  // Bootstrap the Server
+  // ------------------------
 
-  server.listen(port, () => {
-    log(`🚀 Socket.IO server is running on port ${port}`);
-    log(`✅ App listening on the port ${port}`);
-  });
+  const bootstrap = async () => {
+    await setupSocket();
+    initializeDatabases();
+    setupMiddleware();
+    setupLocalization();
+    setupRoutes();
+    initializeAgendaJobs();
+    setupViewEngine();
+
+    server.listen(port, () => {
+      log(`🚀 Socket.IO server is running on port ${port}`);
+      log(`✅ App listening on the port ${port}`);
+    });
+  };
+
+  return { bootstrap, app, server, io };
 };
 
-export default bootstrap;
+// Function to start multiple servers
+const startServers = async (ports: number[]) => {
+  const servers = ports.map((port) => {
+    const serverConfig: ServerConfig = { port };
+    const serverInstance = createServer(serverConfig);
+    return serverInstance.bootstrap();
+  });
+
+  await Promise.all(servers);
+};
+
+export default startServers;
