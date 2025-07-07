@@ -7,11 +7,11 @@ export default class chatSocketController extends Controller {
         try {
             logger.info("socket user id: " + socket.userId + " & socket id: " + socket.id);
             // socket.emit('message', data); // send message to sender only
-            // socket.broadcast.emit('message', data); // send message to all users except sender
+            socket.broadcast.emit('message', data); // send message to all users except sender
 
             // io.emit('message', data); // send message to all users including sender
             // io.to(socket.id).emit('message', data); // send message to specific user
-            socket.broadcast.to('users').emit('message', data); // to room except sender
+            // socket.broadcast.to('users').emit('message', data); // to room except sender
 
              // socket.emit('message', data); // send message to sender only
             // socket.broadcast.emit('message', data); // send message to all users except sender
