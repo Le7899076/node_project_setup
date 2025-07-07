@@ -1,4 +1,5 @@
-import express, { Application, NextFunction } from 'express';
+// src/app.ts
+import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import morgan from 'morgan';
@@ -8,7 +9,7 @@ import apiRoutes from '@routes/api.routes';
 import i18n from '@libs/i18n.libs';
 import log from '@utils/logger.utils';
 import { initializeDatabases } from '@database/init.database';
-import { initializeCronJobs, initializeAgendaJobs } from './cron';
+import { initializeAgendaJobs } from './cron';
 import path from 'path';
 import { engine } from 'express-handlebars';
 import webRoutes from '@routes/web.routes';
@@ -17,153 +18,130 @@ import { Server } from 'socket.io';
 import http from 'http';
 import { chatHandler } from '@handlers/chat.socket.handlers';
 import socketMiddleware from '@middleware/socket.middleware';
-import { fetchAllUsers, getUser, removeUser } from '@utils/socket.utils';
+import { fetchAllUsers, removeUser } from '@utils/socket.utils';
 
-class App {
-    public express: Application;
-    public port: number;
+// App configuration
+const port = Number(process.env.PORT) || 3001;
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  serveClient: true,
+  cors: {
+    origin: '*',
+    credentials: true,
+    allowedHeaders: ['x-token'],
+  },
+  connectionStateRecovery: {},
+  allowEIO3: true,
+  pingTimeout: 7200000,
+  pingInterval: 25000,
+});
 
-    public server: http.Server;
-    public io: Server;
-    constructor(port: number) {
-        this.express = express();
+// ------------------------
+// Setup Sequence Functions
+// ------------------------
 
-        this.server = http.createServer(this.express);
+const setupMiddleware = () => {
+  app.use(
+    helmet.contentSecurityPolicy({
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", 'https://cdn.tailwindcss.com', "'unsafe-inline'"],
+        styleSrc: ["'self'", "'unsafe-inline'", 'https://cdn.tailwindcss.com'],
+        connectSrc: ["'self'", "http://localhost:3001", "ws://localhost:3001"],
+      },
+    })
+  );
 
-        this.io = new Server(this.server, {
-            serveClient: true,
-            cors: {
-                origin: "*",
-                credentials: true,
-                allowedHeaders: ['x-token']
-            },
-            connectionStateRecovery: {},
-            allowEIO3: true,
-            pingTimeout: 7200000,
-            pingInterval: 25000
-        });
+  app.use(cors());
+  app.use(morgan('dev'));
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
+  app.use(compression());
+  app.use(express.static(path.join(process.cwd(), 'public')));
+  app.use(responseMiddleware);
+  app.use(errorMiddleware);
+};
 
-        this.port = port;
+const setupViewEngine = () => {
+  app.engine(
+    'hbs',
+    engine({
+      extname: 'hbs',
+      defaultLayout: 'main',
+      layoutsDir: path.join(process.cwd(), 'views', 'layouts'),
+      partialsDir: path.join(process.cwd(), 'views', 'partials'),
+    })
+  );
+  app.set('view engine', 'hbs');
+  app.set('views', path.join(process.cwd(), 'views'));
+};
 
-        this.initialize();
+const setupLocalization = () => {
+  app.use(i18n.middleware.handle(i18n.i18next));
+};
+
+const setupRoutes = () => {
+  app.use('/', webRoutes);
+  app.use('/api', apiRoutes);
+};
+
+const setupSocket = () => {
+  io.use(socketMiddleware).on('connection', (socket) => {
+    const user = socket.data.user;
+    const userId = user?.id;
+
+    if (userId) {
+      socket.join(`USER_${userId}`);
+      console.log(`Socket ${socket.id} joined room USER_${userId}`);
     }
 
-    private initialize(): void {
-        this.initializeSocket();
-        this.initializeDatabases();
-        this.initializeMiddleware();
-        this.initializeLocalization();
-        this.initializeRoutes();
-        this.initializeCronJobs();
-        this.configViewEngine();
-    }
+    console.log(`🔌 Client connected: ${socket.id} & userId=${userId}`);
 
-    private initializeMiddleware(): void {
-        this.express.use(
-            helmet.contentSecurityPolicy({
-                directives: {
-                    defaultSrc: ["'self'"],
-                    scriptSrc: ["'self'", 'https://cdn.tailwindcss.com', "'unsafe-inline'"],
-                    styleSrc: ["'self'", "'unsafe-inline'", 'https://cdn.tailwindcss.com'],
-                    connectSrc: [
-                        "'self'",
-                        "http://localhost:3001",
-                        "ws://localhost:3001"
-                    ],
-                },
-            })
+    fetchAllUsers().then((result) =>
+      console.log('active users:', result)
+    );
+
+    socket.onAny((event, args) => {
+      chatHandler(event, args, socket, io);
+    });
+
+    socket.on('disconnect', () => {
+      const userId = socket.handshake.query.userId as string;
+      console.log(
+        `🔌 Client disconnected: socketId=${socket.id} & userId=${userId}`
+      );
+      if (userId) {
+        removeUser(userId);
+        fetchAllUsers().then((result) =>
+          console.log('active users:', result)
         );
+      }
+    });
 
-        this.express.use(cors());
-        this.express.use(morgan('dev'));
-        this.express.use(express.json());
-        this.express.use(express.urlencoded({ extended: true }));
-        this.express.use(compression());
-        this.express.use(express.static(path.join(process.cwd(), 'public')));
-        this.express.use(responseMiddleware);
-        this.express.use(errorMiddleware);
+    socket.on('error', (err) => {
+      console.error('Socket error:', err);
+    });
+  });
+};
 
-    }
+// ------------------------
+// Bootstrap the Application
+// ------------------------
 
-    private initializeSocket(): void {
-        this.io
-            .use(socketMiddleware)
-            .on('connection', (socket) => {
-                /*only used in logs*/
-                const user = socket.data.user;
-                const userId = user.id;
+const bootstrap = async () => {
+  setupSocket();
+  initializeDatabases();
+  setupMiddleware();
+  setupLocalization();
+  setupRoutes();
+  initializeAgendaJobs(); // or initializeCronJobs();
+  setupViewEngine();
 
-                if (userId) {
-                    socket.join(`USER_${userId}`);
-                    console.log(`Socket ${socket.id} joined room USER_${userId}`);
-                }
+  server.listen(port, () => {
+    log(`🚀 Socket.IO server is running on port ${port}`);
+    log(`✅ App listening on the port ${port}`);
+  });
+};
 
-
-                console.log(`🔌 Client connected: ${socket.id} & userId=${userId}`);
-                
-                fetchAllUsers().then(result => console.log("active users:", result));
-
-                socket.onAny((event, args) => {
-                    chatHandler(event, args, socket, this.io);
-                });
-
-                socket.on('disconnect', () => {
-                    console.log(`🔌 Client disconnected: socketId=${socket.id} & and userId=${socket.handshake.query.userId}`);
-
-                    let userId = socket.handshake.query.userId as string;
-
-                    /*only used in logs*/
-                    if (userId) {
-                        removeUser(userId);
-                        fetchAllUsers().then(result => console.log("active users:", result));
-                    }
-                });
-
-                socket.on('error', (err) => {
-                    console.error('Socket error:', err);
-                });
-            });
-    }
-
-    private initializeRoutes(): void {
-        this.express.use('/', webRoutes);
-        this.express.use('/api', apiRoutes);
-    }
-
-    // private initializeErrorHandling(): void {
-
-    // }
-
-    private initializeDatabases(): void {
-        initializeDatabases();
-    };
-
-    private initializeLocalization(): void {
-        this.express.use(i18n.middleware.handle(i18n.i18next));
-    }
-
-    private initializeCronJobs(): void {
-        // initializeCronJobs();
-        initializeAgendaJobs();
-    }
-
-    private configViewEngine() {
-        this.express.engine('hbs', engine({
-            extname: 'hbs',
-            defaultLayout: 'main',
-            layoutsDir: path.join(process.cwd(), 'views', 'layouts'),
-            partialsDir: path.join(process.cwd(), 'views', 'partials'),
-        }));
-        this.express.set('view engine', 'hbs');
-        this.express.set('views', path.join(process.cwd(), 'views'));
-    }
-
-    public listen(): void {
-        this.server.listen(this.port, () => {
-            log(`🚀 Socket.IO server is running on port ${this.port}`);
-            log(`✅ App listening on the port ${this.port}`);
-        });
-    }
-}
-
-export default App;
+export default bootstrap;

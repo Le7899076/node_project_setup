@@ -3,6 +3,7 @@ import Controller from "@controllers/controller";
 import { errorSocket } from "@utils/error.socket";
 import logger from "@utils/winston.logger.utils";
 export default class chatSocketController extends Controller {
+   
     public static async handleMessage(data: any, socket: any, io: any) {
         try {
             console.log(`user room : ${data.receiverId}`);
@@ -40,6 +41,34 @@ export default class chatSocketController extends Controller {
 
         } catch (error: any) {
             logger.error("Error to handle join room event", error.message);
+            errorSocket(io, socket, error);
+        }
+    }
+
+    // typing emit is handled from front end this is just for demo purpose
+     public static async handleTyping(data: any, socket: any, io: any) {
+        try {
+            // Broadcast to the receiver (or room) that sender is typing
+            socket.to(`USER_${data.receiverId}`).emit('TYPING', {
+                senderId: socket.userId,
+                isTyping: true
+            });
+        } catch (error: any) {
+            logger.error("Error in handleTyping", error.message);
+            errorSocket(io, socket, error);
+        }
+    }
+
+    // typing emit is handled from front end this is just for demo purpose
+    public static async handleStopTyping(data: any, socket: any, io: any) {
+        try {
+            // Notify receiver that sender has stopped typing
+            socket.to(`USER_${data.receiverId}`).emit('STOP_TYPING', {
+                senderId: socket.userId,
+                isTyping: false
+            });
+        } catch (error: any) {
+            logger.error("Error in handleStopTyping", error.message);
             errorSocket(io, socket, error);
         }
     }
