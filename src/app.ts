@@ -100,6 +100,7 @@ const createServer = (config: ServerConfig) => {
     const DB_NAME = database;
 
     const mongoClient = new MongoClient(MONGO_URL);
+    
     await mongoClient.connect();
 
     const db = mongoClient.db(DB_NAME);
