@@ -93,65 +93,66 @@ const createServer = (config: ServerConfig) => {
     app.use('/api', apiRoutes);
   };
 
-const setupSocket = async () => {
-  const COLLECTION_NAME = "socket_io_adaptor_events";
-  const MONGO_URL= "mongodb://localhost:27017/?replicaSet=rs0";
-  const DB_NAME = 'myProject';
+  const setupSocket = async () => {
+    const { host, port, database } = databaseConfig.connections.mongo;
+    const COLLECTION_NAME = "socket_io_adaptor_events";
+    const MONGO_URL = `mongodb://${host}:${port}/?replicaSet=rs0`;
+    const DB_NAME = database;
 
-  const mongoClient = new MongoClient(MONGO_URL);
-  await mongoClient.connect();
+    const mongoClient = new MongoClient(MONGO_URL);
+    await mongoClient.connect();
 
-  const db = mongoClient.db(DB_NAME);
+    const db = mongoClient.db(DB_NAME);
 
-  // Create capped collection if not exists
-  const collections = await db.listCollections({ name: COLLECTION_NAME }).toArray();
-  if (collections.length === 0) {
-    await db.createCollection(COLLECTION_NAME, {
-      capped: true,
-      size: 1e6,
-    });
-  }
-
-  // Apply adapter
-  io.adapter(createAdapter(db.collection(COLLECTION_NAME)));
-
-  io.use(socketMiddleware).on('connection', (socket) => {
-    const user = socket.data.user;
-    const userId = user?.id;
-
-    if (userId) {
-      socket.join(`USER_${userId}`);
-      console.log(`Socket ${socket.id} joined room USER_${userId} on port ${port}`);
+    // Create capped collection if not exists
+    const collections = await db.listCollections({ name: COLLECTION_NAME }).toArray();
+    if (collections.length === 0) {
+      await db.createCollection(COLLECTION_NAME, {
+        capped: true,
+        size: 1e6,
+      });
     }
 
-    console.log(`🔌 Client connected: ${socket.id} & userId=${userId} on port ${port}`);
+    // Apply adapter
+    io.adapter(createAdapter(db.collection(COLLECTION_NAME)));
 
-    fetchAllUsers().then((result) =>
-      console.log(`active users on port ${port}:`, result)
-    );
+    io.use(socketMiddleware).on('connection', (socket) => {
+      const user = socket.data.user;
+      const userId = user?.id;
 
-    socket.onAny((event, args) => {
-      chatHandler(event, args, socket, io);
-    });
-
-    socket.on('disconnect', () => {
-      const userId = socket.handshake.query.userId as string;
-      console.log(
-        `🔌 Client disconnected: socketId=${socket.id} & userId=${userId} on port ${port}`
-      );
       if (userId) {
-        removeUser(userId);
-        fetchAllUsers().then((result) =>
-          console.log(`active users on port ${port}:`, result)
-        );
+        socket.join(`USER_${userId}`);
+        console.log(`Socket ${socket.id} joined room USER_${userId} on port ${port}`);
       }
-    });
 
-    socket.on('error', (err) => {
-      console.error(`Socket error on port ${port}:`, err);
+      console.log(`🔌 Client connected: ${socket.id} & userId=${userId} on port ${port}`);
+
+      fetchAllUsers().then((result) =>
+        console.log(`active users on port ${port}:`, result)
+      );
+
+      socket.onAny((event, args) => {
+        chatHandler(event, args, socket, io);
+      });
+
+      socket.on('disconnect', () => {
+        const userId = socket.handshake.query.userId as string;
+        console.log(
+          `🔌 Client disconnected: socketId=${socket.id} & userId=${userId} on port ${port}`
+        );
+        if (userId) {
+          removeUser(userId);
+          fetchAllUsers().then((result) =>
+            console.log(`active users on port ${port}:`, result)
+          );
+        }
+      });
+
+      socket.on('error', (err) => {
+        console.error(`Socket error on port ${port}:`, err);
+      });
     });
-  });
-};
+  };
 
 
   // ------------------------
