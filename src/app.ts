@@ -21,6 +21,8 @@ import { fetchAllUsers, removeUser } from '@utils/socket.utils';
 import { createAdapter } from '@socket.io/mongo-adapter';
 import { MongoClient } from 'mongodb';
 import databaseConfig from '@config/database.config';
+const { instrument } = require("@socket.io/admin-ui");
+
 // Interface for server configuration
 interface ServerConfig {
   port: number;
@@ -34,7 +36,7 @@ const createServer = (config: ServerConfig) => {
   const io = new Server(server, {
     serveClient: true,
     cors: {
-      origin: '*',
+      origin: ['http://localhost:3030'],
       credentials: true,
       allowedHeaders: ['x-token'],
     },
@@ -42,6 +44,11 @@ const createServer = (config: ServerConfig) => {
     allowEIO3: true,
     pingTimeout: 7200000,
     pingInterval: 25000,
+  });
+
+  instrument(io, {
+    auth: false,
+    mode: "development",
   });
 
   // ------------------------
@@ -100,7 +107,7 @@ const createServer = (config: ServerConfig) => {
     const DB_NAME = database;
 
     const mongoClient = new MongoClient(MONGO_URL);
-    
+
     await mongoClient.connect();
 
     const db = mongoClient.db(DB_NAME);
