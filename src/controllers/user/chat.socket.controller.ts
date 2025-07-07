@@ -6,7 +6,7 @@ export default class chatSocketController extends Controller {
     public static async handleMessage(data: any, socket: any, io: any) {
         try {
             console.log(`user room : ${data.receiverId}`);
-            io.to(`USER_${data.receiverId}`).emit('message', data);
+            socket.to(`USER_${data.receiverId}`).emit('message', data);
             // logger.info("socket user id: " + socket.userId + " & socket id: " + socket.id);
             // console.log(socket);
             // socket.emit('message', data); // send message to sender only
