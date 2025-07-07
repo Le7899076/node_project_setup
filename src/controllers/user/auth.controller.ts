@@ -31,7 +31,7 @@ class AuthController extends Controller {
         // await agenda.now('send email verification mail', {
         //     email: email,
         //     token: 'token',
-        // });
+        // });  
 
         return res.success(UserResource.transform(user), 'Registered successfully');
     };
