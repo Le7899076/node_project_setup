@@ -5,21 +5,20 @@ import logger from "@utils/winston.logger.utils";
 export default class chatSocketController extends Controller {
     public static async handleMessage(data: any, socket: any, io: any) {
         try {
-            logger.info("socket user id: " + socket.userId + " & socket id: " + socket.id);
-            console.log(socket);
+            console.log(`user room : ${data.receiverId}`);
+            io.to(`USER_${data.receiverId}`).emit('message', data);
+            // logger.info("socket user id: " + socket.userId + " & socket id: " + socket.id);
+            // console.log(socket);
             // socket.emit('message', data); // send message to sender only
-            socket.broadcast.emit('message', data); // send message to all users except sender
-
+            // socket.broadcast.emit('message', data); // send message to all users except sender
             // io.emit('message', data); // send message to all users including sender
             // io.to(socket.id).emit('message', data); // send message to specific user
             // socket.broadcast.to('users').emit('message', data); // to room except sender
-
-             // socket.emit('message', data); // send message to sender only
+            // socket.emit('message', data); // send message to sender only
             // socket.broadcast.emit('message', data); // send message to all users except sender
             // io.to('users').emit('message', data); //send to a room (all in room, including sender)
             // io.to(['room1', 'room2']).emit('message', data);// sends to multiple rooms
             // io.except(socket.id).emit('message', data); //send to all sockets except some (using except)
-        
             // io.of('/chat').except(socket.id).emit('message', data); // Using namespaces (if you use io.of('/chat'))
 
         } catch (error: any) {

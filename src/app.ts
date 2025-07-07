@@ -90,8 +90,17 @@ class App {
             .use(socketMiddleware)
             .on('connection', (socket) => {
                 /*only used in logs*/
-                const { userId, userRole } = socket.handshake.query;
-                console.log(`🔌 Client connected: ${socket.id} & userId=${userId} & userRole=${userRole}`);
+                const user = socket.data.user;
+                const userId = user.id;
+
+                if (userId) {
+                    socket.join(`USER_${userId}`);
+                    console.log(`Socket ${socket.id} joined room USER_${userId}`);
+                }
+
+
+                console.log(`🔌 Client connected: ${socket.id} & userId=${userId}`);
+                
                 fetchAllUsers().then(result => console.log("active users:", result));
 
                 socket.onAny((event, args) => {
