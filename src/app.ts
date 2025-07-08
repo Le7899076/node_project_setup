@@ -22,7 +22,7 @@ import { createAdapter } from '@socket.io/mongo-adapter';
 import { MongoClient } from 'mongodb';
 import databaseConfig from '@config/database.config';
 const { instrument } = require("@socket.io/admin-ui");
-
+const expressLayouts = require('express-ejs-layouts');
 // Interface for server configuration
 interface ServerConfig {
   port: number;
@@ -77,19 +77,7 @@ const createServer = (config: ServerConfig) => {
     app.use(errorMiddleware);
   };
 
-  const setupViewEngine = () => {
-    app.engine(
-      'hbs',
-      engine({
-        extname: 'hbs',
-        defaultLayout: 'main',
-        layoutsDir: path.join(process.cwd(), 'views', 'layouts'),
-        partialsDir: path.join(process.cwd(), 'views', 'partials'),
-      })
-    );
-    app.set('view engine', 'hbs');
-    app.set('views', path.join(process.cwd(), 'views'));
-  };
+
 
   const setupLocalization = () => {
     app.use(i18n.middleware.handle(i18n.i18next));
@@ -162,6 +150,24 @@ const createServer = (config: ServerConfig) => {
     });
   };
 
+  const setupViewEngine = () => {
+    // Handlebars
+    // app.engine('hbs', engine({
+    //   extname: '.hbs',
+    //   defaultLayout: 'main',
+    //   layoutsDir: path.join(process.cwd(), 'views/hbs/layouts'),
+    //   partialsDir: path.join(process.cwd(), 'views/hbs/partials'),
+    // }));
+
+    // EJS
+    app.use(expressLayouts);
+    app.set('views', './views/ejs');
+    app.set('layout', './layouts/full-width');
+    app.set('view engine', 'ejs');
+
+
+    // ❌ DO NOT set default view engine
+  };
 
   // ------------------------
   // Bootstrap the Server
@@ -176,18 +182,32 @@ const createServer = (config: ServerConfig) => {
     initializeAgendaJobs();
     setupViewEngine();
 
-    app.use((req, res, next) : any => {
+    app.get('', function (req, res) {
+      res.render('index.ejs', {
+        title: "Home page"
+      });
+    });
+
+    app.get('/about', function (req, res) {
+      res.render('about.ejs', {
+        title: "About page",
+      });
+    });
+
+    app.use((req, res, next): any => {
       const accept = req.headers['accept']?.includes('application/json');
 
       if (accept) {
         return res.json({
-          status : false,
+          status: false,
           message: "route not found"
         });
       }
 
       return res.status(404).send('<h1>Not found (HTML)</h1>');
     });
+
+
 
 
     server.listen(port, () => {
