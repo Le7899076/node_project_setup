@@ -9,8 +9,8 @@ validateEnv();
 // Define the ports for the servers
 const ports = [
   Number(process.env.PORT) || 3001,
-  Number(process.env.PORT_2) || 3002,
-  Number(process.env.PORT_3) || 3003,
+  // Number(process.env.PORT_2) || 3002,
+  // Number(process.env.PORT_3) || 3003,
 ];
 
 // Start servers on specified ports
