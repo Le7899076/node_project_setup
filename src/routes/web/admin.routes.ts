@@ -6,7 +6,7 @@ const multer = require('multer');
 const upload = multer();
 import bcrypt from 'bcrypt';
 import User from '@models/user.model';
-import redirectIfAuthenticated from '@middleware/redirectIfAuthanticated.middleware';
+import redirectIfAuthenticated from '@middleware/redirectIfAuthenticated.middleware';
 import isAuthenticated from '@middleware/isAuthenticated.middleware';
 
 
