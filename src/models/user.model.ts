@@ -9,7 +9,13 @@ const UserSchema = new Schema(
         email: { type: String, required: true },
         password: { type: String, required: true },
     },
-    { timestamps: true }
+    {
+        timestamps: true,
+        toJSON: { virtuals: true },
+        toObject: { virtuals: true },
+
+    },
+
 );
 
 UserSchema.virtual('posts', {

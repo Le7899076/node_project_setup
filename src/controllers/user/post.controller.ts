@@ -29,21 +29,21 @@ class PostController extends Controller {
         console.log(req.user);
         // const posts = await this.PostService.index();
 
-        const posts = await postModel.find({
-            userId: req.user._id
-        })
+        const posts = await postModel.find({ userId: req.user._id })
             .select('title body createdAt updatedAt')
-            .populate('userId', [
-                'firstName',
-                'lastName',
-                'email',
-                'createdAt',
-                'updatedAt',
-            ]);
+            .populate({
+                path: 'userId',
+                select: ['firstName', 'lastName', 'email', 'createdAt', 'updatedAt'],
+                populate: {
+                    path: 'posts',
+                    select: ['title', 'body', 'createdAt', 'updatedAt'],
+                },
+            });
 
         return res.status(200).json({
             status: true,
-            data: PostResource.collection(posts),
+            // data: PostResource.collection(posts),
+            data: posts
         });
     };
 }
