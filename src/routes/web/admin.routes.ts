@@ -7,18 +7,20 @@ const upload = multer();
 import bcrypt from 'bcrypt';
 import User from '@models/user.model';
 import redirectIfAuthenticated from '@middleware/redirectIfAuthanticated.middleware';
+import isAuthenticated from '@middleware/isAuthenticated.middleware';
 
 
-router.get('/', function (req, res) {
+router.get('/', isAuthenticated, function (req, res) {
     res.render('admin/index', {
         title: "Home page"
     });
 });
 
-router.get('/about', function (req, res) {
+router.get('/about', isAuthenticated, function (req, res) {
     res.render('admin/about', {
         title: "About page",
-        layout: 'layouts/full-width'
+        layout: 'layouts/full-width',
+        user : JSON.stringify(req.session.user)
     });
 });
 
@@ -54,6 +56,18 @@ router.post('/login', redirectIfAuthenticated, upload.none(), async function (re
     req.flash('success', 'Login successful');
     return res.redirect('/admin');
 });
+
+router.get('/logout', isAuthenticated, async function (req, res) {
+    req.session.destroy((err) => {
+        if (err) {
+            req.flash('error', 'Logout operation failed');
+            return res.redirect('/admin');
+        } else {
+            return res.redirect('/admin/login');
+        }
+    });
+});
+
 
 
 export default router;
