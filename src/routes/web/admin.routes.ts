@@ -1,14 +1,14 @@
 import { Request, Response, Router } from 'express';
 const router = Router();
 
-router.get('', function (req, res) {
-    res.render('index', {
+router.get('/', function (req, res) {
+    res.render('admin/index', {
         title: "Home page"
     });
 });
 
 router.get('/about', function (req, res) {
-    res.render('about', {
+    res.render('admin/about', {
         title: "About page",
     });
 });

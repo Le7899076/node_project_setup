@@ -4,14 +4,15 @@ import cors from 'cors';
 import morgan from 'morgan';
 import compression from 'compression';
 import errorMiddleware from '@middleware/error.middleware';
-import apiRoutes from '@routes/api.routes';
+import apiRoutes from '@routes/api/api.routes';
+import adminRoutes from '@routes/web/admin.routes';
 import i18n from '@libs/i18n.libs';
 import log from '@utils/logger.utils';
 import { initializeDatabases } from '@database/init.database';
 import { initializeAgendaJobs } from './cron';
 import path from 'path';
 import { engine } from 'express-handlebars';
-import webRoutes from '@routes/web.routes';
+import webRoutes from '@routes/web/web.routes';
 import responseMiddleware from '@middleware/response.middleware';
 import { Server } from 'socket.io';
 import http from 'http';
@@ -85,6 +86,7 @@ const createServer = (config: ServerConfig) => {
 
   const setupRoutes = () => {
     app.use('/', webRoutes);
+     app.use('/admin', adminRoutes);
     app.use('/api', apiRoutes);
   };
 
