@@ -63,4 +63,5 @@ class PostController extends Controller {
         }
     }
 }
+
 export default new PostController();
