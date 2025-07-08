@@ -216,7 +216,10 @@ const createServer = (config: ServerConfig) => {
         });
       }
 
-      return res.status(404).send('<h1>Not found (HTML)</h1>');
+      return res.status(404).render('admin/404',{
+        title : 'Not found',
+        layout: 'layouts/blank-layout',
+      });
     });
 
 
