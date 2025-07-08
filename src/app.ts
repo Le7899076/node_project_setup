@@ -176,6 +176,20 @@ const createServer = (config: ServerConfig) => {
     initializeAgendaJobs();
     setupViewEngine();
 
+    app.use((req, res, next) : any => {
+      const accept = req.headers['accept']?.includes('application/json');
+
+      if (accept) {
+        return res.json({
+          status : false,
+          message: "route not found"
+        });
+      }
+
+      return res.status(404).send('<h1>Not found (HTML)</h1>');
+    });
+
+
     server.listen(port, () => {
       log(`🚀 Socket.IO server is running on port ${port}`);
       log(`✅ App listening on the port ${port}`);
