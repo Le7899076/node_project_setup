@@ -30,7 +30,7 @@ class PostController extends Controller {
     public index = async (req: any, res: Response, next: NextFunction): Promise<any> => {
         try {
             const page = parseInt(req.query.page as string) || 1;
-            const limit = parseInt(req.query.limit as string) || 10;
+            const limit = parseInt(req.query.per_page as string) || 10;
             const skip = (page - 1) * limit;
 
             const [posts, total] = await Promise.all([
@@ -61,7 +61,6 @@ class PostController extends Controller {
         } catch (error) {
             next(error);
         }
-
     }
 }
 export default new PostController();
