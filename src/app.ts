@@ -188,8 +188,8 @@ const createServer = (config: ServerConfig) => {
       });
     });
 
-    app.get('/about', function (req, res) {
-      res.render('about.ejs', {
+    app.get('/about', function (req, res) {      
+      res.render('about', {
         title: "About page",
       });
     });
