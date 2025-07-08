@@ -8,7 +8,12 @@ const PostSchema = new Schema(
         body: { type: String, required: true },
         userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     },
-    { timestamps: true }
+    {
+        timestamps: true,
+        toJSON: { virtuals: true },
+        toObject: { virtuals: true },
+    }
 );
+
 
 export default model<Post>('Post', PostSchema);

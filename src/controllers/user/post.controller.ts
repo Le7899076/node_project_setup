@@ -25,27 +25,43 @@ class PostController extends Controller {
         );
     };
 
+
+
     public index = async (req: any, res: Response, next: NextFunction): Promise<any> => {
-        console.log(req.user);
-        // const posts = await this.PostService.index();
+        try {
+            const page = parseInt(req.query.page as string) || 1;
+            const limit = parseInt(req.query.limit as string) || 10;
+            const skip = (page - 1) * limit;
 
-        const posts = await postModel.find({ userId: req.user._id })
-            .select('title body createdAt updatedAt')
-            .populate({
-                path: 'userId',
-                select: ['firstName', 'lastName', 'email', 'createdAt', 'updatedAt'],
-                populate: {
-                    path: 'posts',
-                    select: ['title', 'body', 'createdAt', 'updatedAt'],
-                },
+            const [posts, total] = await Promise.all([
+                postModel
+                    .find({ userId: req.user._id })
+                    .select('title body createdAt updatedAt')
+                    .populate({
+                        path: 'userId',
+                        select: ['firstName', 'lastName', 'email', 'createdAt', 'updatedAt'],
+                    })
+                    .skip(skip)
+                    .limit(limit)
+                    .lean(), // optional: improve performance and remove mongoose document overhead
+
+                postModel.countDocuments({ userId: req.user._id })
+            ]);
+
+            return res.status(200).json({
+                status: true,
+                data: posts,
+                meta: {
+                    total,
+                    page,
+                    last_page: Math.ceil(total / limit),
+                    per_page: limit,
+                }
             });
+        } catch (error) {
+            next(error);
+        }
 
-        return res.status(200).json({
-            status: true,
-            // data: PostResource.collection(posts),
-            data: posts
-        });
-    };
+    }
 }
-
 export default new PostController();
