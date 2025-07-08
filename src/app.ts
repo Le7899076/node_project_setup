@@ -22,6 +22,10 @@ import { fetchAllUsers, removeUser } from '@utils/socket.utils';
 import { createAdapter } from '@socket.io/mongo-adapter';
 import { MongoClient } from 'mongodb';
 import databaseConfig from '@config/database.config';
+import session from 'express-session';
+import flash from 'connect-flash';
+import MongoStore from 'connect-mongo';
+
 const { instrument } = require("@socket.io/admin-ui");
 const expressLayouts = require('express-ejs-layouts');
 // Interface for server configuration
@@ -62,7 +66,8 @@ const createServer = (config: ServerConfig) => {
         directives: {
           defaultSrc: ["'self'"],
           scriptSrc: ["'self'", 'https://cdn.tailwindcss.com', "'unsafe-inline'"],
-          styleSrc: ["'self'", "'unsafe-inline'", 'https://cdn.tailwindcss.com'],
+          // styleSrc: ["'self'", "'unsafe-inline'", 'https://cdn.tailwindcss.com'],
+          styleSrc: ["*"],
           connectSrc: ["'self'", `http://localhost:${port}`, `ws://localhost:${port}`],
         },
       })
@@ -76,6 +81,20 @@ const createServer = (config: ServerConfig) => {
     app.use(express.static(path.join(process.cwd(), 'public')));
     app.use(responseMiddleware);
     app.use(errorMiddleware);
+
+    app.use(session({
+      secret: 'your-production-secret',
+      resave: false,
+      saveUninitialized: false,
+      store: MongoStore.create({
+        mongoUrl: `${databaseConfig.connections.mongo.url}`,
+        collectionName: 'sessions',
+        ttl: 14 * 24 * 60 * 60, // 14 days session expiry
+      }),
+      rolling: true
+    }));
+
+    app.use(flash());
   };
 
 
@@ -86,7 +105,7 @@ const createServer = (config: ServerConfig) => {
 
   const setupRoutes = () => {
     app.use('/', webRoutes);
-     app.use('/admin', adminRoutes);
+    app.use('/admin', adminRoutes);
     app.use('/api', apiRoutes);
   };
 
@@ -183,7 +202,9 @@ const createServer = (config: ServerConfig) => {
     setupViewEngine();
     setupRoutes();
     initializeAgendaJobs();
-    
+
+
+
 
     app.use((req, res, next): any => {
       const accept = req.headers['accept']?.includes('application/json');
