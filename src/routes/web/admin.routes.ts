@@ -16,11 +16,13 @@ router.get('/', isAuthenticated, function (req, res) {
     });
 });
 
-router.get('/about', isAuthenticated, function (req, res) {
+router.get('/about', isAuthenticated, async function (req, res) {
+    let user = await User.findById(req.session?.user?._id).populate('posts');
+
     res.render('admin/about', {
         title: "About page",
         layout: 'layouts/full-width',
-        user : JSON.stringify(req.session.user)
+        user: user
     });
 });
 

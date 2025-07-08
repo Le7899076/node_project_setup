@@ -12,4 +12,11 @@ const UserSchema = new Schema(
     { timestamps: true }
 );
 
+UserSchema.virtual('posts', {
+    ref: 'Post',
+    localField: '_id',
+    foreignField: 'userId',
+});
+
+
 export default model<User>('User', UserSchema);

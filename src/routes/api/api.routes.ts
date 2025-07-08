@@ -6,14 +6,15 @@ import authValidator from '@validators/auth.validator';
 import AuthController from '@controllers/user/auth.controller';
 import multer from 'multer';
 import { verifyOtp } from '@utils/sms.utils';
+import auth from '@middleware/auth.middleware';
 
 const router = Router();
 const upload = multer();
 
 
 router
-    .get('/posts', PostController.index)
-    .post('/posts', validate(postValidator.create), PostController.create);
+    .get('/posts', auth, PostController.index)
+    .post('/posts',auth, validate(postValidator.create), PostController.create);
 
 router
     .post('/users/register', upload.none(), validate(authValidator.register), AuthController.register)

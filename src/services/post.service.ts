@@ -4,9 +4,9 @@ import Post from '@interfaces/post.interfaces';
 class PostService {
     private post = PostModel;
 
-    public async create(title: string, body: string): Promise<Post> {
+    public async create(title: string, body: string,userId :any): Promise<Post> {
         try {
-            const post = await this.post.create({ title, body });
+            const post = await this.post.create({ title, body,userId });
             return post;
         } catch (error) {
             throw new Error('Unable to create post');
