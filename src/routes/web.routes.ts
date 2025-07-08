@@ -1,9 +1,16 @@
 import { Request, Response, Router } from 'express';
 const router = Router();
 
-router.get('/register', (req: Request, res: Response) => {
-    return res.render('auth/register', { title: 'Home Page' });
+router.get('', function (req, res) {
+    res.render('index', {
+        title: "Home page"
+    });
 });
 
+router.get('/about', function (req, res) {
+    res.render('about', {
+        title: "About page",
+    });
+});
 
 export default router;

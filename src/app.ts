@@ -178,21 +178,10 @@ const createServer = (config: ServerConfig) => {
     initializeDatabases();
     setupMiddleware();
     setupLocalization();
+    setupViewEngine();
     setupRoutes();
     initializeAgendaJobs();
-    setupViewEngine();
-
-    app.get('', function (req, res) {
-      res.render('index.ejs', {
-        title: "Home page"
-      });
-    });
-
-    app.get('/about', function (req, res) {      
-      res.render('about', {
-        title: "About page",
-      });
-    });
+    
 
     app.use((req, res, next): any => {
       const accept = req.headers['accept']?.includes('application/json');
