@@ -9,6 +9,8 @@ import { verifyOtp } from '@utils/sms.utils';
 import auth from '@middleware/auth.middleware';
 import User from '@models/sequelize/user.model';
 import { Op } from 'sequelize';
+import { model } from 'mongoose';
+import Post from '@models/sequelize/post.model';
 
 const router = Router();
 const upload = multer();
@@ -47,7 +49,14 @@ router.post('/tests', async function (req: any, res: any, next: any) {
                 firstName: {
                     [Op.iLike]: `%${search}%`, // PostgreSQL case-insensitive LIKE
                 },
+
             },
+            include: [
+                {
+                    model: Post,
+                    as: 'posts', // Must match alias in `User.hasMany`
+                },
+            ],
             limit: Number(limit),
             offset,
             order: [['createdAt', 'DESC']],
@@ -56,12 +65,12 @@ router.post('/tests', async function (req: any, res: any, next: any) {
 
 
     return res.json({
-      status: true,
-      message: 'Users fetched successfully.',
-      data: data.rows,
-      total: data.count,
-      page: Number(page),
-      pages: Math.ceil(data.count / Number(limit)),
+        status: true,
+        message: 'Users fetched successfully.',
+        data: data.rows,
+        total: data.count,
+        page: Number(page),
+        pages: Math.ceil(data.count / Number(limit)),
     });
 
     // return res.json({
