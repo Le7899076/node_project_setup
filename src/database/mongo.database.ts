@@ -3,15 +3,17 @@ import mongoose from 'mongoose';
 import config from '@config/database.config';
 
 export const connectMongo = async (): Promise<void> => {
-  const { url } = config.connections.mongo;
-  
-  if (!url) throw new Error('MONGO_URL not set');
-
   try {
+    const { url } = config.connections.mongo;
+
+    if (!url) {
+      throw new Error('Please config {MONGO_URL} in your env file.');
+    }
+
     await mongoose.connect(url);
-    log('✅ MongoDB connected');
+    log('✅ MongoDB connected successfully.');
   } catch (err) {
-    console.error('❌ MongoDB connection error:', err);
+    log('❌ MongoDB connection failed: ', err);
     throw err;
   }
 };

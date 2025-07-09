@@ -1,3 +1,9 @@
+# install sequelize
+npm install --save sequelize
+
+#postgres
+npm install --save pg pg-hstore 
+
 # Create migration
 npx sequelize-cli migration:generate --name migration_name
 

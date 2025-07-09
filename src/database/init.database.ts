@@ -16,12 +16,12 @@ export const initializeDatabases = async (): Promise<void> => {
     await sequelize.sync({ alter: true }); // or { force: true } for dropping and recreating
     console.log('✅ Tables synced');
 
-    await User.create({
-      firstName: 'John',
-      lastName: 'Doe',
-      email : 'john001@example.com',
-      password : bcrypt.hashSync('password123', 10),
-    })
+    // await User.create({
+    //   firstName: 'John',
+    //   lastName: 'Doe',
+    //   email : 'john001@example.com',
+    //   password : bcrypt.hashSync('password123', 10),
+    // })
   } catch (error) {
     console.error('❌ DB init error:', error);
   }
