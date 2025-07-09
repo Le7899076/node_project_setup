@@ -1,0 +1,8 @@
+# Create migration
+npx sequelize-cli migration:generate --name migration_name
+
+# Run migrations
+npx sequelize-cli db:migrate
+
+# Undo last migration
+npx sequelize-cli db:migrate:undo

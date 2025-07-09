@@ -1,15 +1,9 @@
 import { Sequelize } from 'sequelize';
 
-const sequelize = new Sequelize('postgres://postgres:root@localhost:5432/testing');
+const sequelize = new Sequelize('postgres://postgres:root@localhost:5432/testing',{
+    timezone: '+00:00',
+    logging: false,
+});
 
-// Test connection
-export const connectPostgres = async () => {
-    try {
-        await sequelize.authenticate();
-        console.log('Postgres connected.');
-    } catch (error) {
-        console.error('Postgres connection error: ', error);
-    }
-};
-
+export default sequelize;
 
